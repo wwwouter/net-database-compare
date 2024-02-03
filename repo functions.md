@@ -1,23 +1,47 @@
 
-- Full-Text Search Columns
+
+- public async Task<IEnumerable<UserDto>> GetUsersByCityAsync(string city)
+- public async Task UpdateUserDetachedAsync(int userId, string newCity, bool isActive)
+-   public async Task AddUserAsync(string name, string city)
+-  public async Task DeleteUserByIdAsync(int userId)
 
 
-select join
+This is the list that I'm going for:
 
-select in select
-
-ook  wat dingen met JSON
-array
-select op prop
-edit prop
-
-CTE Support
+- AddEmployee 
+- UpdateEmployeeName(string name)
+- DeleteEmployeeById(int employeeId)
+- GetEmployeesByCity(string city)
+- GetProjectsByEmployeeId(int employeeId)
+- GetProjectsByCustomerId(int customerId)
 
 
-On the other hand, if the database default value is true, this means when the property value is false, then the database default will be used, which is true! And when the property value is true, then true will be inserted. So, the value in the column will always end true in the database, regardless of what the property value is.
-EF8 fixes this problem by setting the sentinel for bool properties to the same value as the database default value. Both cases above then result in the correct value being inserted, regardless of whether the database default is true or false.
+- Full-Text Search
+- outer join
+- select in select
+- edit prop in JSON
+- select on prop in JSON
+- CTE example
+- how to handle `IsActive bit NOT NULL DEFAULT 1` when creating with partial object data (not providing IsActive)
+- transaction for one operation
+- transaction for multiple operations
+- bulk insert
+- bulk update
+- Dynamic Query Generation: add dictionary of filters and sort columns
+- Paging and Sorting:
+- self join
+- aggregate function
+- select view
+- call stored procedure
+- migrations (is there a simple file based approach? Like 0001.sql, 0002.sql, etc)
+- spatial select
+- appending to an array within a JSON object.
 
-boolean default true
+
+Can you generate a list of functions that you would expect to see in a repository class? Add the function signature and a brief description of what it does and what we're showcasing.
+
+
+Can you think of more stuff to add to the list?
 
 
 
@@ -113,4 +137,3 @@ export function applySorting<R extends SelectQueryBuilder<any, any, any>, T exte
         },
     );
 
-    

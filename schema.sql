@@ -55,13 +55,14 @@ CREATE TABLE Customer (
 CREATE TABLE ProjectCustomer (
     ProjectID uniqueidentifier NOT NULL,
     CustomerID uniqueidentifier NOT NULL,
-    StartDate datetime2 NOT NULL,
-    EndDate datetime2 NULL,
+    StartDate date NOT NULL,
+    EndDate date NULL,
     FOREIGN KEY (ProjectID) REFERENCES Project(ProjectID),
     FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID),
     PRIMARY KEY (ProjectID, CustomerID),
     CreatedOn datetime2 NOT NULL DEFAULT SYSDATETIME(),
-    UpdatedOn datetime2 NULL
+    UpdatedOn datetime2 NULL,
+    IsActive bit NOT NULL DEFAULT 1
 );
 
 CREATE TABLE EmployeeHierarchy (
