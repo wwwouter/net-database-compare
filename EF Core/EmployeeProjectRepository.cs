@@ -282,4 +282,25 @@ SELECT * FROM EmployeeCTE";
 
 
 
+    public async Task PerformSingleOperationInTransaction(SingleOperationTransactionDto operationDto)
+    {
+        // Begin a transaction
+        using var transaction = await _context.Database.BeginTransactionAsync();
+        try
+        {
+            // Execute the operation encapsulated in the SingleOperationTransactionDto
+            operationDto.Operation();
+
+            // Commit transaction if the operation is successful
+            await transaction.CommitAsync();
+        }
+        catch (Exception)
+        {
+            // Rollback transaction if the operation fails
+            await transaction.RollbackAsync();
+            throw; // Re-throw the exception to handle it outside this method or log it as needed
+        }
+    }
+
+
 }

@@ -9,7 +9,8 @@ CREATE TABLE Employees (
     AddressLine2 nvarchar(50),
     City nvarchar(30),
     CreatedOn datetime2 NOT NULL DEFAULT SYSDATETIME(),
-    UpdatedOn datetime2 NULL
+    UpdatedOn datetime2 NULL,
+    IsActive bit NOT NULL DEFAULT 1
 );
 
 CREATE TABLE Projects (
@@ -57,8 +58,7 @@ CREATE TABLE ProjectCustomers (
     FOREIGN KEY (CustomerId) REFERENCES Customers(Id),
     PRIMARY KEY (ProjectId, CustomerId),
     CreatedOn datetime2 NOT NULL DEFAULT SYSDATETIME(),
-    UpdatedOn datetime2 NULL,
-    IsActive bit NOT NULL DEFAULT 1
+    UpdatedOn datetime2 NULL
 );
 
 CREATE TABLE EmployeeHierarchy (

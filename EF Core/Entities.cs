@@ -58,6 +58,9 @@ public class Employee
 
     public DateTime? UpdatedOn { get; set; }
 
+    [Required]
+    public bool IsActive { get; set; }
+
     // Navigation properties
     public virtual ICollection<Project> AssignedProjects { get; set; } = new List<Project>();
     public virtual EmployeeHierarchy? EmployeeHierarchy { get; set; }
@@ -194,8 +197,7 @@ public class ProjectCustomer
 
     public DateTime? UpdatedOn { get; set; }
 
-    [Required]
-    public bool IsActive { get; set; }
+
 
     // Navigation properties
     [ForeignKey("ProjectId")]
