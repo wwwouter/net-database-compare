@@ -224,5 +224,30 @@ public class EmployeeProjectRepository : IEmployeeProjectRepository
     }
 
 
+    public async Task<List<CustomerBasedOnJsonPropertyDto>> SelectCustomerBasedOnJsonProperty(JsonPropertyQueryDto jsonPropertyQuery)
+    {
+        var query = _context.Customers
+            .Where(c => EF.Functions.JsonValue(c.JSONData, $"$.{jsonPropertyQuery.JsonPropertyName}") == jsonPropertyQuery.Value)
+            .Select(c => new CustomerBasedOnJsonPropertyDto
+            {
+                CustomerID = c.Id,
+                Name = c.Name,
+                Age = c.Age,
+                Email = c.Email,
+                PhoneNumber = c.PhoneNumber,
+                AddressLine1 = c.AddressLine1,
+                AddressLine2 = c.AddressLine2,
+                City = c.City,
+                Country = c.Country,
+                GeographicLocation = c.GeographicLocation,
+                LoyaltyPoints = c.LoyaltyPoints,
+                LastPurchaseDate = c.LastPurchaseDate,
+                Notes = c.Notes,
+                JSONData = c.JSONData
+            });
+
+        return await query.ToListAsync();
+    }
+
 
 }
