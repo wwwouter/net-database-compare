@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using NetTopologySuite.Geometries;
 
 public interface IEmployeeProjectRepository
 {
@@ -39,7 +40,6 @@ public interface IEmployeeProjectRepository
 
     // Example method for selecting entities based on a condition within JSONData
     Task<List<CustomerBasedOnJsonPropertyDto>> SelectCustomersWithFavoriteNumber(int favoriteNumber);
-
 
     // Selects based on a property within a JSON column.
     Task<List<CustomerBasedOnJsonPropertyDto>> SelectCustomerBasedOnJsonProperty(JsonPropertyQueryDto jsonPropertyQuery);
@@ -106,7 +106,6 @@ public record EmployeeAddDto(
     Guid EmployeeID,
     string Name,
     int Age,
-    byte Gender,
     string Department,
     DateTime HireDate,
     decimal Salary,
@@ -165,11 +164,10 @@ public record JsonArrayAppendDto(Guid EntityID, string ArrayPropertyName, string
 public record EmployeeDto(
     Guid EmployeeID,
     string Name,
-    int Age,
-    byte Gender,
+    int? Age,
     string Department,
     DateTime HireDate,
-    decimal Salary,
+    decimal? Salary,
     string? AddressLine1,
     string? AddressLine2,
     string City);
@@ -190,19 +188,16 @@ public record ProjectDto(
 public record CustomerBasedOnJsonPropertyDto(
     Guid CustomerID,
     string Name,
-    int Age,
-    byte Gender,
+    int? Age,
     string Email,
     string PhoneNumber,
     string? AddressLine1,
     string? AddressLine2,
     string City,
     string Country,
-    string GeographicLocation,
+    Point? GeographicLocation,
     int LoyaltyPoints,
-    DateTime LastPurchaseDate,
-    byte FavoriteColor,
-    byte PreferredProduct,
+    DateTime? LastPurchaseDate,
     string? Notes,
     string JSONData);
 

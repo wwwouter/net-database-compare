@@ -31,7 +31,7 @@ public class Employee
     [MaxLength(50)]
     public string Name { get; set; }
 
-    public int Age { get; set; }
+    public int? Age { get; set; }
 
     [Required]
     [MaxLength(20)]
@@ -128,7 +128,7 @@ public class Customer
     [MaxLength(50)]
     public string Name { get; set; }
 
-    public int Age { get; set; }
+    public int? Age { get; set; }
 
     [Required]
     [MaxLength(254)]
