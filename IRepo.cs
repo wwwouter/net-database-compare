@@ -31,8 +31,15 @@ public interface IEmployeeProjectRepository
     // Showcases a select within a select query.
     Task<List<EmployeeSubqueryDto>> GetEmployeesWithSubquery();
 
-    // Edits a property within a JSON column.
-    Task EditPropertyInJson(JsonEditDto jsonEdit);
+    // Edits the entire JSONData column for a specific entity.
+    Task EditJsonData(EditJsonDataDto editJsonDataDto);
+
+    // Appends a number to the favoriteNumbers array within the JSONData column of a specific entity.
+    Task AppendNumberToJsonData(AppendNumberToJsonDataDto appendNumberDto);
+
+    // Example method for selecting entities based on a condition within JSONData
+    Task<List<CustomerBasedOnJsonPropertyDto>> SelectCustomersWithFavoriteNumber(int favoriteNumber);
+
 
     // Selects based on a property within a JSON column.
     Task<List<CustomerBasedOnJsonPropertyDto>> SelectCustomerBasedOnJsonProperty(JsonPropertyQueryDto jsonPropertyQuery);
@@ -82,3 +89,126 @@ public interface IEmployeeProjectRepository
     // Appends to an array within a JSON object.
     Task AppendToArrayInJsonObject(JsonArrayAppendDto arrayAppend);
 }
+
+
+public record JsonDataDto
+{
+    public string Name { get; init; }
+    public string? Category { get; init; }
+    public List<int> FavoriteNumbers { get; init; } = new();
+}
+
+public record EditJsonDataDto(Guid EntityId, JsonDataDto UpdatedJsonData);
+
+public record AppendNumberToJsonDataDto(Guid EntityId, int NumberToAppend);
+
+public record EmployeeAddDto(
+    Guid EmployeeID,
+    string Name,
+    int Age,
+    byte Gender,
+    string Department,
+    DateTime HireDate,
+    decimal Salary,
+    string? AddressLine1,
+    string? AddressLine2,
+    string City,
+    DateTime CreatedOn,
+    DateTime? UpdatedOn);
+
+public record EmployeeUpdateNameDto(Guid EmployeeID, string Name);
+
+public record EmployeeDeleteDto(Guid EmployeeID);
+
+public record EmployeeCityQueryDto(string City);
+
+public record EmployeeProjectsQueryDto(Guid EmployeeID);
+
+public record CustomerProjectsQueryDto(Guid CustomerID);
+
+public record FullTextSearchDto(string SearchTerm);
+
+public record EmployeeProjectOuterJoinDto(Guid EmployeeID, Guid? ProjectID);
+
+public record EmployeeSubqueryDto(Guid EmployeeID, string Name);
+
+public record JsonEditDto(Guid EntityID, string JsonPropertyName, string NewValue);
+
+public record JsonPropertyQueryDto(string JsonPropertyName, string Value);
+
+public record EmployeeHierarchyQueryDto(Guid EmployeeID);
+
+// Assuming IsActive is managed internally, not exposed via DTO
+public record EmployeePartialAddDto(string Name, int Age);
+
+public record SingleOperationTransactionDto(Action Operation);
+
+public record MultipleOperationsTransactionDto(IEnumerable<Action> Operations);
+
+public record EmployeeBulkInsertDto(IEnumerable<EmployeeAddDto> Employees);
+
+public record EmployeeBulkUpdateDto(IEnumerable<EmployeeUpdateNameDto> Employees);
+
+public record DynamicQueryDto(Dictionary<string, object?> Filters, Dictionary<string, bool> SortOrder);
+
+public record PagingAndSortingQueryDto(int PageNumber, int PageSize, string SortBy, bool Ascending);
+
+public record EmployeeSelfJoinDto(Guid EmployeeID, Guid? ManagerID);
+
+public record ProjectSummaryDto(Guid ProjectID, string Name, decimal TotalBudget);
+
+public record StoredProcedureQueryDto(string ProcedureName, Dictionary<string, object?> Parameters);
+
+public record SpatialQueryDto(double Latitude, double Longitude, double Distance);
+
+public record JsonArrayAppendDto(Guid EntityID, string ArrayPropertyName, string NewValue);
+
+public record EmployeeDto(
+    Guid EmployeeID,
+    string Name,
+    int Age,
+    byte Gender,
+    string Department,
+    DateTime HireDate,
+    decimal Salary,
+    string? AddressLine1,
+    string? AddressLine2,
+    string City);
+
+public record ProjectDto(
+    Guid ProjectID,
+    string Name,
+    DateTime StartDate,
+    DateTime EndDate,
+    decimal Budget,
+    byte Status,
+    byte[] LogoSvg,
+    string? Notes,
+    float Progress,
+    byte Priority,
+    Guid? EmployeeAssigned);
+
+public record CustomerBasedOnJsonPropertyDto(
+    Guid CustomerID,
+    string Name,
+    int Age,
+    byte Gender,
+    string Email,
+    string PhoneNumber,
+    string? AddressLine1,
+    string? AddressLine2,
+    string City,
+    string Country,
+    string GeographicLocation,
+    int LoyaltyPoints,
+    DateTime LastPurchaseDate,
+    byte FavoriteColor,
+    byte PreferredProduct,
+    string? Notes,
+    string JSONData);
+
+public record GetEmployeesByCityDto(Guid EmployeeID, string Name, string City);
+
+public record EmployeesWithDynamicQueryDto(Guid EmployeeID, string Name, Dictionary<string, object?> DynamicCriteria);
+
+public record PagedResultDto<T>(IEnumerable<T> Items, int TotalCount) where T : class;
