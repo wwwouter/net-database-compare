@@ -1,5 +1,13 @@
 
 
+
+
+- ` Task AddEmployeeAsync(Employee employee);` only add partial data, not all fields are required
+- `Task<List<Employee>> GetEmployeesByCityAsync(string city);` return partial data
+-  `Task<List<Project>> GetProjectsByEmployeeIdAsync(Guid employeeId);` return partial data
+- 
+
+
 - public async Task<IEnumerable<UserDto>> GetUsersByCityAsync(string city)
 - public async Task UpdateUserDetachedAsync(int userId, string newCity, bool isActive)
 -   public async Task AddUserAsync(string name, string city)
