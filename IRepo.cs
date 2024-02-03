@@ -206,3 +206,13 @@ public record GetEmployeesByCityDto(Guid EmployeeID, string Name, string City);
 public record EmployeesWithDynamicQueryDto(Guid EmployeeID, string Name, Dictionary<string, object?> DynamicCriteria);
 
 public record PagedResultDto<T>(IEnumerable<T> Items, int TotalCount) where T : class;
+
+
+public record EmployeeHierarchyDto
+{
+    public Guid EmployeeId { get; init; }
+    public Guid? ManagerId { get; init; }
+    public string EmployeeName { get; init; }
+    public string? ManagerName { get; init; }
+}
+

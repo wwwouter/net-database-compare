@@ -249,5 +249,37 @@ public class EmployeeProjectRepository : IEmployeeProjectRepository
         return await query.ToListAsync();
     }
 
+    public async Task<List<EmployeeHierarchyDto>> GetEmployeeHierarchy(EmployeeHierarchyQueryDto hierarchyQuery)
+    {
+        var cteQuery = @"
+WITH RECURSIVE EmployeeCTE AS (
+    SELECT e.Id AS EmployeeId, e.Name AS EmployeeName, eh.ManagerId, m.Name AS ManagerName
+    FROM Employees e
+    LEFT JOIN EmployeeHierarchy eh ON e.Id = eh.EmployeeId
+    LEFT JOIN Employees m ON eh.ManagerId = m.Id
+    WHERE e.Id = {0}
+    UNION ALL
+    SELECT e.Id, e.Name, eh.ManagerId, m.Name
+    FROM Employees e
+    INNER JOIN EmployeeHierarchy eh ON e.Id = eh.EmployeeId
+    INNER JOIN EmployeeCTE ecte ON eh.ManagerId = ecte.EmployeeId
+    LEFT JOIN Employees m ON eh.ManagerId = m.Id
+)
+SELECT * FROM EmployeeCTE";
+
+        var employeeHierarchies = await _context.EmployeeHierarchies
+            .FromSqlRaw(cteQuery, hierarchyQuery.EmployeeID)
+            .Select(eh => new EmployeeHierarchyDto
+            {
+                EmployeeId = eh.EmployeeId,
+                ManagerId = eh.ManagerId,
+                EmployeeName = eh.EmployeeName,
+                ManagerName = eh.ManagerName
+            }).ToListAsync();
+
+        return employeeHierarchies;
+    }
+
+
 
 }
