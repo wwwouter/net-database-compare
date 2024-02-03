@@ -120,12 +120,40 @@ public class EmployeeProjectRepository : IEmployeeProjectRepository
             {
                 EmployeeID = e.Id,
                 Name = e.Name,
-                // Other property mappings
+                Age = e.Age,
+                Gender = e.Gender,
+                Department = e.Department,
+                HireDate = e.HireDate,
+                Salary = e.Salary ?? 0M, // Assuming Salary is a nullable decimal and providing a default value if null
+                AddressLine1 = e.AddressLine1,
+                AddressLine2 = e.AddressLine2,
+                City = e.City
             })
             .ToListAsync();
 
         return employees;
     }
+
+
+    public async Task<List<EmployeeSubqueryDto>> GetEmployeesWithSubquery()
+    {
+        // Define a threshold for project budgets
+        var budgetThreshold = 100000M;
+
+        var employeesWithHighBudgetProjects = await _context.Employees
+            .Where(e => _context.Projects
+                .Any(p => p.EmployeeAssigned == e.Id && p.Budget > budgetThreshold))
+            .Select(e => new EmployeeSubqueryDto
+            {
+                EmployeeID = e.Id,
+                Name = e.Name
+            })
+            .ToListAsync();
+
+        return employeesWithHighBudgetProjects;
+    }
+
+
 
 
 
