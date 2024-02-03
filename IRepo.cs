@@ -138,7 +138,6 @@ public record JsonPropertyQueryDto(string JsonPropertyName, string Value);
 
 public record EmployeeHierarchyQueryDto(Guid EmployeeID);
 
-// Assuming IsActive is managed internally, not exposed via DTO
 public record EmployeePartialAddDto(string Name, int Age);
 
 public record SingleOperationTransactionDto(Action Operation);
