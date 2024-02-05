@@ -175,7 +175,7 @@ public record ProjectSummaryDto(
     int NumberOfCustomers);
 
 
-public record StoredProcedureQueryDto(string ProcedureName, Dictionary<string, object?> Parameters);
+public record StoredProcedureQueryDto(string Department);
 
 public record SpatialQueryDto(double Latitude, double Longitude, double Distance);
 

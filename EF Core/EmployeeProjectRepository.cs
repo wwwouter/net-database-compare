@@ -540,5 +540,30 @@ SELECT * FROM EmployeeCTE";
         return await _context.ProjectSummaries.ToListAsync();
     }
 
+    public async Task<List<EmployeeDto>> CallStoredProcedure(StoredProcedureQueryDto query)
+    {
+        // Assuming the stored procedure name is "GetEmployeesByDepartment"
+        var procedureName = "GetEmployeesByDepartment";
+        var departmentParam = new Microsoft.Data.SqlClient.SqlParameter("@Department", query.Department);
+
+        // Execute the stored procedure and map the results to the EmployeeDto
+        var employees = await _context.Employees
+            .FromSqlRaw($"EXEC {procedureName} @Department", departmentParam)
+            .Select(e => new EmployeeDto
+            {
+                EmployeeID = e.Id,
+                Name = e.Name,
+                Age = e.Age,
+                Department = e.Department,
+                HireDate = e.HireDate,
+                Salary = e.Salary,
+                AddressLine1 = e.AddressLine1,
+                AddressLine2 = e.AddressLine2,
+                City = e.City
+            }).ToListAsync();
+
+        return employees;
+    }
+
 
 }

@@ -13,3 +13,24 @@ SELECT
 FROM
     Projects p
 LEFT JOIN Employees e ON p.EmployeeAssigned = e.Id;
+
+
+CREATE PROCEDURE GetEmployeesByDepartment
+    @Department NVARCHAR(20)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT
+        Id AS EmployeeID,
+        Name,
+        Age,
+        Department,
+        HireDate,
+        Salary,
+        AddressLine1,
+        AddressLine2,
+        City
+    FROM Employees
+    WHERE Department = @Department
+END
