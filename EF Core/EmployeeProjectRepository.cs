@@ -398,6 +398,66 @@ SELECT * FROM EmployeeCTE";
         _context.ChangeTracker.AutoDetectChangesEnabled = true;
     }
 
+    public async Task<List<EmployeesWithDynamicQueryDto>> GetEmployeesWithDynamicQuery(DynamicQueryDto query)
+    {
+        // Starting with a base query
+        IQueryable<Employee> baseQuery = _context.Employees;
+
+        // Dynamically applying filters
+        foreach (var filter in query.Filters)
+        {
+            switch (filter.Key.ToLower())
+            {
+                case "name":
+                    baseQuery = baseQuery.Where(e => EF.Functions.Like(e.Name, $"%{filter.Value}%"));
+                    break;
+                case "department":
+                    baseQuery = baseQuery.Where(e => EF.Functions.Like(e.Department, $"%{filter.Value}%"));
+                    break;
+                case "age":
+                    if (filter.Value is int age)
+                    {
+                        baseQuery = baseQuery.Where(e => e.Age == age);
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        // Preparing for sorting - defaulting to Name if no sort criteria provided
+        var sortProperty = query.SortOrder.FirstOrDefault();
+        if (string.IsNullOrEmpty(sortProperty.Key))
+        {
+            baseQuery = baseQuery.OrderBy(e => e.Name);
+        }
+        else
+        {
+            switch (sortProperty.Key.ToLower())
+            {
+                case "name":
+                    baseQuery = sortProperty.Value ? baseQuery.OrderBy(e => e.Name) : baseQuery.OrderByDescending(e => e.Name);
+                    break;
+                case "age":
+                    baseQuery = sortProperty.Value ? baseQuery.OrderBy(e => e.Age) : baseQuery.OrderByDescending(e => e.Age);
+                    break;
+                default:
+                    baseQuery = baseQuery.OrderBy(e => e.Name); // Fallback sorting
+                    break;
+            }
+        }
+
+        // Projecting the final query to DTO
+        var result = await baseQuery.Select(e => new EmployeesWithDynamicQueryDto
+        {
+            EmployeeID = e.Id,
+            Name = e.Name,
+            DynamicCriteria = query.Filters
+        }).ToListAsync();
+
+        return result;
+    }
+
 
 
 }
