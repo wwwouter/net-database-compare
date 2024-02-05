@@ -12,9 +12,6 @@ Step 3: Implement Repository
 
 
 - EF COre
-    -  Task<ITransaction> BeginTransactionAsync();
-        - to DB something?
-    - AppDbContext: fill ins
     - check to see if the entities are matching the tables. 
         - after migration
     - does validation by annotations work?
