@@ -13,5 +13,3 @@ Use the correct type for Customers.GeographicLocation.  Projects.Status and Proj
 Step 1: 
 Step 2: Configure DbContext
 Step 3: Implement Repository
-
- 
