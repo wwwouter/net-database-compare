@@ -12,8 +12,6 @@ Step 3: Implement Repository
 
 
 - EF COre
-    - check to see if the entities are matching the tables. 
-        - after migration
     - does validation by annotations work?
         - double check other packages
 
