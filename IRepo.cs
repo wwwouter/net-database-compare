@@ -53,8 +53,7 @@ public interface IEmployeeProjectRepository
     // Executes two different updates in a single transaction.
     Task RunTwoUpdatesInSingleTransaction(SingleOperationTransactionDto data);
 
-    // Method to start a new transaction
-    Task<ITransaction> BeginTransactionAsync();
+
 
     // Executes a single operation within a transaction.
     Task Operation1InATransaction(Guid id, string name);

@@ -253,5 +253,22 @@ FROM EmployeeCTE";
         return await connection.QueryAsync<EmployeeHierarchyDto>(sql, new { EmployeeID = hierarchyQuery.EmployeeID });
     }
 
+    public async Task AddEmployeeWithPartialData(EmployeePartialAddDto employeePartial)
+    {
+        var sql = @"
+INSERT INTO Employees (Id, Name, Age, Department, HireDate, CreatedOn, UpdatedOn, IsActive) 
+VALUES (@EmployeeID, @Name, @Age, 'Not Specified', @HireDate, SYSDATETIME(), SYSDATETIME(), 1)";
+
+        await ExecuteAsync(sql, new
+        {
+            EmployeeID = Guid.NewGuid(), // Assuming the ID is generated here rather than by the client.
+            employeePartial.Name,
+            employeePartial.Age,
+            HireDate = DateTime.UtcNow // Assuming the hire date is set to the current date for demonstration.
+                                       // 'Department' is set to 'Not Specified' as a placeholder. Adjust this based on your requirements.
+        });
+    }
+
+
 
 }

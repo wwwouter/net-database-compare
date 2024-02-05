@@ -16,12 +16,6 @@ public class EmployeeProjectRepository : IEmployeeProjectRepository
         _context = context;
     }
 
-    public async Task<ITransaction> BeginTransactionAsync()
-    {
-        var dbContextTransaction = await _context.Database.BeginTransactionAsync();
-        return new EfCoreTransaction(dbContextTransaction);
-    }
-
     public async Task AddEmployee(EmployeeAddDto employeeDto)
     {
         var employee = new Employee

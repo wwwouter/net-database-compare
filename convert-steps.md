@@ -22,9 +22,8 @@ I'm writing a demo app to compare different data access packages. I already impl
     <!-- - Implement Task<List<CustomerBasedOnJsonPropertyDto>> SelectCustomerBasedOnJsonProperty(JsonPropertyQueryDto jsonPropertyQuery); -->
     <!-- - Implement Task<List<CustomerBasedOnJsonPropertyDto>> SelectCustomersWithFavoriteNumber(int favoriteNumber); -->
     <!-- - Implement Task<List<EmployeeHierarchyDto>> GetEmployeeHierarchy(EmployeeHierarchyQueryDto hierarchyQuery); -->
-    - Implement Task AddEmployeeWithPartialData(EmployeePartialAddDto employeePartial);
+    <!-- - Implement Task AddEmployeeWithPartialData(EmployeePartialAddDto employeePartial); -->
     - Implement Task RunTwoUpdatesInSingleTransaction(SingleOperationTransactionDto data);
-    - Implement Task<ITransaction> BeginTransactionAsync();
     - Implement Task Operation1InATransaction(Guid id, string name);
     - Implement Task Operation2InATransaction(Guid id, string name);
     - Implement Task BulkInsertEmployees(IEnumerable<EmployeeBulkInsertDto> employees);
