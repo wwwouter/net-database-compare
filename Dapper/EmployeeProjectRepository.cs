@@ -118,5 +118,20 @@ WHERE p.CustomerId = @CustomerID";
         return await QueryAsync<ProjectDto>(sql, new { customerProjectsQuery.CustomerID });
     }
 
+    public async Task<List<EmployeeDto>> FullTextSearch(FullTextSearchDto searchQuery)
+    {
+        // Assuming full-text search is set up on the Employees table, for columns like Name, Department, etc.
+        var sql = @"
+SELECT Id as EmployeeID, Name, Age, Department, HireDate, Salary, AddressLine1, AddressLine2, City 
+FROM Employees 
+WHERE CONTAINS((Name, Department, City), @SearchTerm)";
+
+        // The @SearchTerm parameter should be formatted appropriately for full-text search.
+        // For a simple search, you can use the search term directly. For more complex searches, you might need to format the search term (e.g., prefixing with '*', using BOOLEAN mode, etc.)
+        var formattedSearchTerm = $"\"*{searchQuery.SearchTerm}*\""; // Simple formatting example. Adjust based on your needs and SQL Server's full-text search syntax.
+
+        return await QueryAsync<EmployeeDto>(sql, new { SearchTerm = formattedSearchTerm });
+    }
+
 
 }
