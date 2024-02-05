@@ -53,6 +53,7 @@ public interface IEmployeeProjectRepository
     // Executes two different updates in a single transaction.
     Task RunTwoUpdatesInSingleTransaction(SingleOperationTransactionDto data);
 
+    // Method to start a new transaction
     Task<ITransaction> BeginTransactionAsync();
 
     // Executes a single operation within a transaction.
@@ -85,14 +86,14 @@ public interface IEmployeeProjectRepository
     // Calls a stored procedure and handles its results.
     Task<List<EmployeeDto>> CallStoredProcedure(StoredProcedureQueryDto query);
 
-    // Handles database migrations with a file-based approach.
-    Task ApplyMigrations();
-
     // Performs a spatial data selection, e.g., finding customers within a certain distance.
     Task<List<CustomerSpatialQueryDto>> GetCustomersNearLocation(SpatialQueryDto query);
 
     // Appends to an array within a JSON object.
     Task AppendToArrayInJsonObject(JsonArrayAppendDto arrayAppend);
+
+    // Handles database migrations with a file-based approach.
+    Task ApplyMigrations();
 }
 
 public interface ITransaction : IDisposable

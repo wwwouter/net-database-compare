@@ -344,5 +344,31 @@ SELECT * FROM EmployeeCTE";
         }
     }
 
+    public async Task BulkInsertEmployees(IEnumerable<EmployeeBulkInsertDto> employeeDtos)
+    {
+        var employees = employeeDtos.Select(dto => new Employee
+        {
+            Id = dto.EmployeeID,
+            Name = dto.Name,
+            Age = dto.Age,
+            Department = dto.Department,
+            HireDate = dto.HireDate,
+            Salary = dto.Salary,
+            AddressLine1 = dto.AddressLine1,
+            AddressLine2 = dto.AddressLine2,
+            City = dto.City,
+            CreatedOn = DateTime.UtcNow,
+            IsActive = true
+        });
+
+        _context.ChangeTracker.AutoDetectChangesEnabled = false; // Improve performance for bulk insert
+
+        await _context.Employees.AddRangeAsync(employees);
+        await _context.SaveChangesAsync();
+
+        _context.ChangeTracker.AutoDetectChangesEnabled = true; // Re-enable auto-detect changes after the bulk insert
+    }
+
+
 
 }
