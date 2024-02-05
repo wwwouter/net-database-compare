@@ -50,11 +50,14 @@ public interface IEmployeeProjectRepository
     // Demonstrates handling of partial object creation, specifically with the IsActive flag.
     Task AddEmployeeWithPartialData(EmployeePartialAddDto employeePartial);
 
-    // Executes a single operation within a transaction.
-    Task PerformSingleOperationInTransaction(SingleOperationTransactionDto operation);
+    // Executes two different updates in a single transaction.
+    Task RunTwoUpdatesInSingleTransaction(SingleOperationTransactionDto operation);
 
-    // Executes multiple operations within a single transaction.
-    Task PerformMultipleOperationsInTransaction(MultipleOperationsTransactionDto operations);
+    // Executes a single operation within a transaction.
+    Task Operation1InATransaction(Guid id, string name, ITransaction transaction);
+
+    // Executes a single operation within a transaction.
+    Task Operation2InATransaction(Guid id, string name, ITransaction transaction);
 
     // Inserts a bulk list of entities efficiently.
     Task BulkInsertEmployees(IEnumerable<EmployeeBulkInsertDto> employees);
@@ -138,10 +141,6 @@ public record JsonPropertyQueryDto(string JsonPropertyName, string Value);
 public record EmployeeHierarchyQueryDto(Guid EmployeeID);
 
 public record EmployeePartialAddDto(string Name, int Age);
-
-public record SingleOperationTransactionDto(Action Operation);
-
-public record MultipleOperationsTransactionDto(IEnumerable<Action> Operations);
 
 public record EmployeeBulkInsertDto(IEnumerable<EmployeeAddDto> Employees);
 
