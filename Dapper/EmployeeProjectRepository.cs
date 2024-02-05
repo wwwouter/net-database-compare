@@ -194,6 +194,34 @@ WHERE Id = @EntityId";
         });
     }
 
+    public async Task<List<CustomerBasedOnJsonPropertyDto>> SelectCustomerBasedOnJsonProperty(JsonPropertyQueryDto jsonPropertyQuery)
+    {
+
+        var allowedPropertyNames = new HashSet<string> { "Name", "Category" };
+
+        // Validate user input against the whitelist
+        if (!allowedPropertyNames.Contains(jsonPropertyQuery.JsonPropertyName))
+        {
+            throw new ArgumentException("Invalid JSON property name.");
+        }
+
+        var jsonPath = "$." + jsonPropertyQuery.JsonPropertyName;
+        var sql = $@"
+SELECT Id as CustomerID, Name, Age, Email, PhoneNumber, AddressLine1, AddressLine2, City, Country, GeographicLocation, LoyaltyPoints, LastPurchaseDate, Notes, JSONData
+FROM Customers
+WHERE JSON_VALUE(JSONData, @JsonPath) = @Value";
+
+
+        return QueryAsync<CustomerBasedOnJsonPropertyDto>(sql, new
+        {
+            JsonPath = jsonPath, // JSON path is directly injected into SQL, ensure it's safe
+            Value = jsonPropertyQuery.Value
+        });
+
+    }
+
+
+
     public async Task<List<CustomerBasedOnJsonPropertyDto>> SelectCustomersWithFavoriteNumber(int favoriteNumber)
     {
         var sql = @"
@@ -203,11 +231,8 @@ CROSS APPLY OPENJSON(c.JSONData, '$.FavoriteNumbers')
     WITH (Number int '$') AS favNumbers
 WHERE favNumbers.Number = @FavoriteNumber";
 
-        using (var connection = CreateConnection())
-        {
-            var results = await connection.QueryAsync<CustomerBasedOnJsonPropertyDto>(sql, new { FavoriteNumber = favoriteNumber });
-            return results.ToList();
-        }
+
+        return await QueryAsync<CustomerBasedOnJsonPropertyDto>(sql, new { FavoriteNumber = favoriteNumber });
     }
 
 
