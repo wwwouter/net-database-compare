@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using NetTopologySuite;
 using NetTopologySuite.Geometries;
 using System;
 using System.Collections.Generic;
@@ -564,6 +565,41 @@ SELECT * FROM EmployeeCTE";
 
         return employees;
     }
+
+
+
+    public async Task<List<CustomerSpatialQueryDto>> GetCustomersNearLocation(SpatialQueryDto query)
+    {
+        // Ensure the geometry factory's SRID matches your database SRID for geographic locations.
+        // 4326 is commonly used for GPS coordinates.
+        var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326);
+
+        // Create a point representing the query location
+        var queryLocation = geometryFactory.CreatePoint(new Coordinate(query.Longitude, query.Latitude));
+
+        // Query customers within the specified distance from the query location
+        var customers = await _context.Customers
+            .Where(c => c.GeographicLocation.IsWithinDistance(queryLocation, query.Distance))
+            .Select(c => new CustomerSpatialQueryDto
+            {
+                CustomerID = c.Id,
+                Name = c.Name,
+                Email = c.Email,
+                PhoneNumber = c.PhoneNumber,
+                AddressLine1 = c.AddressLine1,
+                AddressLine2 = c.AddressLine2,
+                City = c.City,
+                Country = c.Country,
+                GeographicLocation = c.GeographicLocation,
+                LoyaltyPoints = c.LoyaltyPoints,
+                LastPurchaseDate = c.LastPurchaseDate,
+                Notes = c.Notes
+            })
+            .ToListAsync();
+
+        return customers;
+    }
+
 
 
 }
