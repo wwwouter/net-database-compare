@@ -108,5 +108,15 @@ WHERE ep.EmployeeId = @EmployeeID";
         return await QueryAsync<ProjectDto>(sql, new { employeeProjectsQuery.EmployeeID });
     }
 
+    public async Task<List<ProjectDto>> GetProjectsByCustomerId(CustomerProjectsQueryDto customerProjectsQuery)
+    {
+        var sql = @"
+SELECT p.Id as ProjectID, p.Name, p.StartDate, p.EndDate, p.Budget, p.Status, p.LogoSvg, p.Notes, p.Progress, p.Priority, p.EmployeeAssigned
+FROM Projects p
+WHERE p.CustomerId = @CustomerID";
+
+        return await QueryAsync<ProjectDto>(sql, new { customerProjectsQuery.CustomerID });
+    }
+
 
 }
