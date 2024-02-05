@@ -235,6 +235,23 @@ WHERE favNumbers.Number = @FavoriteNumber";
         return await QueryAsync<CustomerBasedOnJsonPropertyDto>(sql, new { FavoriteNumber = favoriteNumber });
     }
 
+    public async Task<List<EmployeeHierarchyDto>> GetEmployeeHierarchy(EmployeeHierarchyQueryDto hierarchyQuery)
+    {
+        var sql = @"
+;WITH EmployeeCTE AS (
+    SELECT e.Id, e.ManagerId, e.Name
+    FROM Employees e
+    WHERE e.Id = @EmployeeID
+    UNION ALL
+    SELECT e.Id, e.ManagerId, e.Name
+    FROM Employees e
+    INNER JOIN EmployeeCTE ecte ON e.Id = ecte.ManagerId
+)
+SELECT Id as EmployeeId, ManagerId, Name as EmployeeName
+FROM EmployeeCTE";
+
+        return await connection.QueryAsync<EmployeeHierarchyDto>(sql, new { EmployeeID = hierarchyQuery.EmployeeID });
+    }
 
 
 }
