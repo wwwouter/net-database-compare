@@ -162,6 +162,24 @@ WHERE EXISTS (
     }
 
 
+    public async Task EditJsonData(EditJsonDataDto editJsonDataDto)
+    {
+        var sql = @"
+UPDATE YourTableName 
+SET JSONData = @UpdatedJson 
+WHERE Id = @EntityId";
+
+        // Assuming the JsonDataDto's content is serialized to a JSON string for the update.
+        // This serialization step depends on how your data is structured and may need adjustment.
+        var updatedJson = JsonConvert.SerializeObject(editJsonDataDto.UpdatedJsonData);
+
+        await ExecuteAsync(sql, new
+        {
+            EntityId = editJsonDataDto.EntityId,
+            UpdatedJson = updatedJson
+        });
+    }
+
 
 
 }

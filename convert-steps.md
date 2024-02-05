@@ -17,7 +17,7 @@ I'm writing a demo app to compare different data access packages. I already impl
     <!-- - Implement Task<List<EmployeeDto>> FullTextSearch(FullTextSearchDto searchQuery); -->
     <!-- - Implement Task<List<EmployeeProjectOuterJoinDto>> GetEmployeeProjectsWithOuterJoin(); -->
     <!-- - Implement Task<List<EmployeeSubqueryDto>> GetEmployeesWithSubquery(); -->
-    - Implement Task EditJsonData(EditJsonDataDto editJsonDataDto);
+    <!-- - Implement Task EditJsonData(EditJsonDataDto editJsonDataDto); -->
     - Implement Task AppendNumberToJsonData(AppendNumberToJsonDataDto appendNumberDto);
     - Implement Task<List<CustomerBasedOnJsonPropertyDto>> SelectCustomersWithFavoriteNumber(int favoriteNumber);
     - Implement Task<List<CustomerBasedOnJsonPropertyDto>> SelectCustomerBasedOnJsonProperty(JsonPropertyQueryDto jsonPropertyQuery);
