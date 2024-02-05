@@ -1,33 +1,4 @@
-- ApplyMigrations interface
-- where to call
-    - fail fast
-        - rollback everything (one transaction?)
-
-I'm writing a repository with EF Core to compare different data access packages. Write next missing method. Keep DTO nullable values nullable. If not clear, just assume a query, based on the description. MS SQL Server is the database.
-
-
-Can you create the necessary files to Define the Entity Classes (in full) for this schema for ef core 8 and .NET 8 (used with an Entity Framework Core DbContext)? Add Data Annotations if relevant.
-Use the correct type for Customers.GeographicLocation.  Projects.Status and Projects.Priority should be enums.
-
-
-Step 1: 
-Step 2: Configure DbContext
-Step 3: Implement Repository
-
-
-- EF COre
-    -  Task<ITransaction> BeginTransactionAsync();
-        - to DB something?
-    - AppDbContext: fill ins
-    - check to see if the entities are matching the tables. 
-        - after migration
-
-
-
-
-
-
-Where to call this? It should fail fast. So if there is an error in a sql file, it should rollback and stop the application. ```using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.IO;
 using System.Linq;
@@ -169,4 +140,3 @@ public class MigrationService
 
 
 }
-``` Also the filepath should be configurable

@@ -89,9 +89,6 @@ public interface IEmployeeProjectRepository
     // Performs a spatial data selection, e.g., finding customers within a certain distance.
     Task<List<CustomerSpatialQueryDto>> GetCustomersNearLocation(SpatialQueryDto query);
 
-    // Appends to an array within a JSON object.
-    Task AppendToArrayInJsonObject(JsonArrayAppendDto arrayAppend);
-
     // Handles database migrations with a file-based approach.
     Task ApplyMigrations();
 }
@@ -179,7 +176,6 @@ public record StoredProcedureQueryDto(string Department);
 
 public record SpatialQueryDto(double Latitude, double Longitude, double Distance);
 
-public record JsonArrayAppendDto(Guid EntityID, string ArrayPropertyName, string NewValue);
 
 public record EmployeeDto(
     Guid EmployeeID,

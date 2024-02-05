@@ -34,3 +34,21 @@ BEGIN
     FROM Employees
     WHERE Department = @Department
 END
+
+
+CREATE TABLE AppliedMigrations (
+    MigrationId INT IDENTITY(1,1) PRIMARY KEY,
+    ScriptName VARCHAR(255) NOT NULL,
+    AppliedBy VARCHAR(255) NOT NULL,
+    AppliedAt DATETIME NOT NULL
+);
+
+
+CREATE TABLE MigrationLock (
+    LockId INT PRIMARY KEY,
+    IsLocked BIT NOT NULL,
+    LockedBy VARCHAR(255),
+    LockAcquiredAt DATETIME
+);
+
+
