@@ -100,6 +100,13 @@ public interface ITransaction : IDisposable
 }
 
 
+public interface ITransactionService
+{
+    Task<ITransaction> BeginTransactionAsync();
+
+}
+
+
 
 public record JsonDataDto
 {

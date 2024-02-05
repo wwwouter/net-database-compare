@@ -16,6 +16,8 @@ builder.Services.AddScoped<MigrationService>(provider =>
         migrationScriptsPath
     ));
 
+builder.Services..AddScoped<ITransactionService, TransactionService>();
+
 // Continue setting up the application...
 var app = builder.Build();
 
