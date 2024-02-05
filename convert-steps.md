@@ -9,7 +9,7 @@ I'm writing a demo app to compare different data access packages. I already impl
 <!-- - Create empty EmployeeProjectRepository -->
 - Fill EmployeeProjectRepository one method at a time.
     <!-- - Implement Task AddEmployee(EmployeeAddDto employee); -->
-    - Implement Task UpdateEmployeeName(EmployeeUpdateNameDto employeeUpdate);
+    <!-- - Implement Task UpdateEmployeeName(EmployeeUpdateNameDto employeeUpdate); -->
     - Implement Task DeleteEmployeeById(EmployeeDeleteDto employeeDelete);
     - Implement Task<List<GetEmployeesByCityDto>> GetEmployeesByCity(EmployeeCityQueryDto cityQuery);
     - Implement Task<List<ProjectDto>> GetProjectsByEmployeeId(EmployeeProjectsQueryDto employeeProjectsQuery);

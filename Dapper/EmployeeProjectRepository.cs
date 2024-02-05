@@ -19,32 +19,38 @@ public class EmployeeProjectRepository : IEmployeeProjectRepository
         return new SqlConnection(_connectionString);
     }
 
+    private async Task ExecuteAsync(string sql, object param = null)
+    {
+        using (var connection = CreateConnection())
+        {
+            await connection.OpenAsync();
+            await connection.ExecuteAsync(sql, param);
+        }
+    }
+
     public async Task AddEmployee(EmployeeAddDto employee)
     {
         var sql = @"
 INSERT INTO Employees (Id, Name, Age, Department, HireDate, Salary, AddressLine1, AddressLine2, City, CreatedOn, UpdatedOn) 
 VALUES (@EmployeeID, @Name, @Age, @Department, @HireDate, @Salary, @AddressLine1, @AddressLine2, @City, @CreatedOn, @UpdatedOn)";
 
-        using (var connection = new SqlConnection(_connectionString))
-        {
-            await connection.OpenAsync();
-            await connection.ExecuteAsync(sql, new
-            {
-                employee.EmployeeID,
-                employee.Name,
-                employee.Age,
-                employee.Department,
-                employee.HireDate,
-                employee.Salary,
-                employee.AddressLine1,
-                employee.AddressLine2,
-                employee.City,
-                employee.CreatedOn,
-                employee.UpdatedOn
-            });
-        }
-    }
 
+        await this.ExecuteAsync(sql, new
+        {
+            employee.EmployeeID,
+            employee.Name,
+            employee.Age,
+            employee.Department,
+            employee.HireDate,
+            employee.Salary,
+            employee.AddressLine1,
+            employee.AddressLine2,
+            employee.City,
+            employee.CreatedOn,
+            employee.UpdatedOn
+        });
+
+    }
     public async Task UpdateEmployeeName(EmployeeUpdateNameDto employeeUpdate)
     {
         var sql = @"
@@ -52,15 +58,23 @@ UPDATE Employees
 SET Name = @Name 
 WHERE Id = @EmployeeID";
 
-        using (var connection = CreateConnection()) // Utilizing the existing CreateConnection method
+        await this.ExecuteAsync(sql, new
         {
-            await connection.OpenAsync();
-            await connection.ExecuteAsync(sql, new
-            {
-                employeeUpdate.EmployeeID,
-                employeeUpdate.Name
-            });
-        }
+            employeeUpdate.EmployeeID,
+            employeeUpdate.Name
+        });
+    }
+
+    public async Task DeleteEmployeeById(EmployeeDeleteDto employeeDelete)
+    {
+        var sql = @"
+DELETE FROM Employees 
+WHERE Id = @EmployeeID";
+
+        await this.ExecuteAsync(sql, new
+        {
+            employeeDelete.EmployeeID
+        });
     }
 
 
