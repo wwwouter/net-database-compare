@@ -97,4 +97,16 @@ WHERE City = @City";
         return await QueryAsync<GetEmployeesByCityDto>(sql, new { cityQuery.City });
     }
 
+    public async Task<List<ProjectDto>> GetProjectsByEmployeeId(EmployeeProjectsQueryDto employeeProjectsQuery)
+    {
+        var sql = @"
+SELECT p.Id as ProjectID, p.Name, p.StartDate, p.EndDate, p.Budget, p.Status, p.LogoSvg, p.Notes, p.Progress, p.Priority, p.EmployeeAssigned
+FROM Projects p
+INNER JOIN EmployeeProjects ep ON p.Id = ep.ProjectId
+WHERE ep.EmployeeId = @EmployeeID";
+
+        return await QueryAsync<ProjectDto>(sql, new { employeeProjectsQuery.EmployeeID });
+    }
+
+
 }
