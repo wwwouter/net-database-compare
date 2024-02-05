@@ -144,6 +144,24 @@ LEFT OUTER JOIN Projects p ON ep.ProjectId = p.Id";
         return await QueryAsync<EmployeeProjectOuterJoinDto>(sql);
     }
 
+    public async Task<List<EmployeeSubqueryDto>> GetEmployeesWithSubquery()
+    {
+        // Define a threshold for project budgets
+        var budgetThreshold = 100000M;
+
+        var sql = @"
+SELECT e.Id AS EmployeeID, e.Name
+FROM Employees e
+WHERE EXISTS (
+    SELECT 1
+    FROM Projects p
+    WHERE p.EmployeeAssigned = e.Id AND p.Budget > @BudgetThreshold
+)";
+
+        return await QueryAsync<EmployeeSubqueryDto>(sql, new { BudgetThreshold = budgetThreshold });
+    }
+
+
 
 
 }

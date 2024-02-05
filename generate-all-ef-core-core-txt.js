@@ -6,7 +6,7 @@ const fs = require("fs");
 const path = require("path");
 
 const dir = path.join(__dirname, "EF Core");
-const outputFile = path.join(__dirname, "all-ef-core-core.txt");
+const outputFile = path.join(__dirname, "all-ef-core-code.txt");
 
 let output = "";
 
