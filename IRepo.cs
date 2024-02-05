@@ -53,11 +53,13 @@ public interface IEmployeeProjectRepository
     // Executes two different updates in a single transaction.
     Task RunTwoUpdatesInSingleTransaction(SingleOperationTransactionDto data);
 
-    // Executes a single operation within a transaction.
-    Task Operation1InATransaction(Guid id, string name, ITransaction transaction);
+    Task<ITransaction> BeginTransactionAsync();
 
     // Executes a single operation within a transaction.
-    Task Operation2InATransaction(Guid id, string name, ITransaction transaction);
+    Task Operation1InATransaction(Guid id, string name);
+
+    // Executes a single operation within a transaction.
+    Task Operation2InATransaction(Guid id, string name);
 
     // Inserts a bulk list of entities efficiently.
     Task BulkInsertEmployees(IEnumerable<EmployeeBulkInsertDto> employees);
@@ -92,6 +94,13 @@ public interface IEmployeeProjectRepository
     // Appends to an array within a JSON object.
     Task AppendToArrayInJsonObject(JsonArrayAppendDto arrayAppend);
 }
+
+public interface ITransaction : IDisposable
+{
+    Task CommitAsync();
+    Task RollbackAsync();
+}
+
 
 
 public record JsonDataDto
@@ -215,3 +224,5 @@ public record EmployeeHierarchyDto
     public string? ManagerName { get; init; }
 }
 
+
+public record SingleOperationTransactionDto(Guid id1, string name1, Guid id2, string name2);
