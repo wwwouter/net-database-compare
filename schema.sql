@@ -9,7 +9,7 @@ CREATE TABLE Employees (
     AddressLine2 nvarchar(50),
     City nvarchar(30),
     CreatedOn datetime2 NOT NULL DEFAULT SYSDATETIME(),
-    UpdatedOn datetime2 NULL,
+    UpdatedOn datetime2  NOT NULL DEFAULT SYSDATETIME(),
     IsActive bit NOT NULL DEFAULT 1
 );
 
@@ -27,7 +27,7 @@ CREATE TABLE Projects (
     EmployeeAssigned uniqueidentifier,
     FOREIGN KEY (EmployeeAssigned) REFERENCES Employees(Id),
     CreatedOn datetime2 NOT NULL DEFAULT SYSDATETIME(),
-    UpdatedOn datetime2 NULL
+    UpdatedOn datetime2  NOT NULL DEFAULT SYSDATETIME()
 );
 
 CREATE TABLE Customers (
@@ -46,7 +46,7 @@ CREATE TABLE Customers (
     Notes nvarchar(MAX),
     JSONData nvarchar(max) NOT NULL DEFAULT '{}',
     CreatedOn datetime2 NOT NULL DEFAULT SYSDATETIME(),
-    UpdatedOn datetime2 NULL
+    UpdatedOn datetime2  NOT NULL DEFAULT SYSDATETIME()
 );
 
 CREATE TABLE ProjectCustomers (
@@ -58,7 +58,7 @@ CREATE TABLE ProjectCustomers (
     FOREIGN KEY (CustomerId) REFERENCES Customers(Id),
     PRIMARY KEY (ProjectId, CustomerId),
     CreatedOn datetime2 NOT NULL DEFAULT SYSDATETIME(),
-    UpdatedOn datetime2 NULL
+    UpdatedOn datetime2  NOT NULL DEFAULT SYSDATETIME()
 );
 
 CREATE TABLE EmployeeHierarchy (
@@ -68,7 +68,7 @@ CREATE TABLE EmployeeHierarchy (
     FOREIGN KEY (ManagerId) REFERENCES Employee(Id),
     PRIMARY KEY (EmployeeId),
     CreatedOn datetime2 NOT NULL DEFAULT SYSDATETIME(),
-    UpdatedOn datetime2 NULL
+    UpdatedOn datetime2  NOT NULL DEFAULT SYSDATETIME()
 );
 
 CREATE VIEW ProjectSummaries AS

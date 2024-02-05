@@ -65,4 +65,22 @@ public class AppDbContext : DbContext
         });
 
     }
+
+    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        var entries = ChangeTracker
+            .Entries()
+            .Where(e => e.Entity is ITrackable &&
+                        (e.State == EntityState.Added || e.State == EntityState.Modified));
+
+        foreach (var entityEntry in entries)
+        {
+            var now = DateTime.UtcNow;
+            ((ITrackable)entityEntry.Entity).UpdatedOn = now;
+            ((ITrackable)entityEntry.Entity).CreatedOn = now;
+
+        }
+
+        return await base.SaveChangesAsync(cancellationToken);
+    }
 }

@@ -4,6 +4,12 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using NetTopologySuite.Geometries;
 
+public interface ITrackable
+{
+    DateTime CreatedOn { get; set; }
+    DateTime? UpdatedOn { get; set; }
+}
+
 public enum ProjectStatus
 {
     Planned,
@@ -22,7 +28,7 @@ public enum ProjectPriority
 
 
 [Table("Employees")]
-public class Employee
+public class Employee : ITrackable
 {
     [Key]
     public Guid Id { get; set; } = Guid.NewGuid();
@@ -60,7 +66,7 @@ public class Employee
 
 
 [Table("Projects")]
-public class Project
+public class Project : ITrackable
 {
     [Key]
     public Guid Id { get; set; } = Guid.NewGuid();
@@ -101,7 +107,7 @@ public class Project
 
 
 [Table("Customers")]
-public class Customer
+public class Customer : ITrackable
 {
     [Key]
     public Guid Id { get; set; } = Guid.NewGuid();
@@ -144,7 +150,7 @@ public class Customer
 
 
 [Table("ProjectCustomers")]
-public class ProjectCustomer
+public class ProjectCustomer : ITrackable
 {
     [Key, Column(Order = 0)]
     public Guid ProjectId { get; set; }
@@ -175,7 +181,7 @@ public class ProjectCustomer
 
 
 [Table("EmployeeHierarchy")]
-public class EmployeeHierarchy
+public class EmployeeHierarchy : ITrackable
 {
     [Key]
     public Guid EmployeeId { get; set; }
