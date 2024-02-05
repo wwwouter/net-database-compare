@@ -39,4 +39,5 @@ I'm writing a demo app to compare different data access packages. I already impl
 - Create MigrationService.
 - Create AppDbContext equivalent.
 - Create Program.cs.
-- How to make sure CreatedOn and UpdatedOn are set correctly? Preferably without using triggers and manual actions.
+- How to make sure CreatedOn and UpdatedOn are set correctly? Preferably without using triggers and manual actions. 
+    - Afterwards, adjust the repository to use the new method.

@@ -1,0 +1,7 @@
+- wizard coder v1 
+    - ef core: fill in 5 methods: ok
+    - dapper insert with default value: fail
+- dolphin 2 mistral 7B
+    - ef core methods: fail
+- mixtral 8x 7B q4
+    - ef core methods: close but very bad code
