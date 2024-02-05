@@ -346,6 +346,8 @@ SELECT * FROM EmployeeCTE";
 
     public async Task BulkInsertEmployees(IEnumerable<EmployeeBulkInsertDto> employeeDtos)
     {
+        // Use EF Core Bulk Extensions for more performance
+
         var employees = employeeDtos.Select(dto => new Employee
         {
             Id = dto.EmployeeID,
@@ -367,6 +369,33 @@ SELECT * FROM EmployeeCTE";
         await _context.SaveChangesAsync();
 
         _context.ChangeTracker.AutoDetectChangesEnabled = true; // Re-enable auto-detect changes after the bulk insert
+    }
+
+    public async Task BulkUpdateEmployees(IEnumerable<EmployeeBulkUpdateDto> employeeDtos)
+    {
+        // Use EF Core Bulk Extensions for more performance
+        //      var employeesToUpdate = employeeDtos.Select(dto => new Employee
+        // {
+        //     Id = dto.EmployeeID,
+        //     Name = dto.Name,
+        // }).ToList();
+
+        // await _context.BulkUpdateAsync(employeesToUpdate);
+
+        _context.ChangeTracker.AutoDetectChangesEnabled = false; // Improve performance
+
+        foreach (var dto in employeeDtos)
+        {
+            var employee = await _context.Employees.FindAsync(dto.EmployeeID);
+            if (employee != null)
+            {
+                employee.Name = dto.Name;
+                // Apply other updates as necessary
+            }
+        }
+
+        await _context.SaveChangesAsync();
+        _context.ChangeTracker.AutoDetectChangesEnabled = true;
     }
 
 
