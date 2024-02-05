@@ -115,73 +115,107 @@ public record JsonDataDto
     public List<int> FavoriteNumbers { get; init; } = new();
 }
 
-public record EditJsonDataDto(Guid EntityId, JsonDataDto UpdatedJsonData);
+public record EditJsonDataDto(
+    [Required] Guid EntityId,
+    [Required] JsonDataDto UpdatedJsonData
+);
 
-public record AppendNumberToJsonDataDto(Guid EntityId, int NumberToAppend);
+public record AppendNumberToJsonDataDto(
+    [Required] Guid EntityId,
+    [Required, Range(0, int.MaxValue)] int NumberToAppend
+); public record EmployeeAddDto(
+    [Required] Guid EmployeeID,
+    [Required, StringLength(50)] string Name,
+    [Required, Range(1, 120)] int Age,
+    [Required, StringLength(20)] string Department,
+    [Required] DateTime HireDate,
+    [Required, Range(0.01, double.MaxValue)] decimal Salary,
+    StringLength(50)] string? AddressLine1,
+    [StringLength(50)] string? AddressLine2,
+    [Required, StringLength(30)] string City,
+    [Required] DateTime CreatedOn,
+    DateTime? UpdatedOn
+);
 
-public record EmployeeAddDto(
-    Guid EmployeeID,
-    string Name,
-    int Age,
-    string Department,
-    DateTime HireDate,
-    decimal Salary,
-    string? AddressLine1,
-    string? AddressLine2,
-    string City,
-    DateTime CreatedOn,
-    DateTime? UpdatedOn);
+public record EmployeeUpdateNameDto(
+    [Required] Guid EmployeeID,
+    [Required, StringLength(50)] string Name
+);
 
-public record EmployeeUpdateNameDto(Guid EmployeeID, string Name);
+public record EmployeeDeleteDto([Required] Guid EmployeeID);
 
-public record EmployeeDeleteDto(Guid EmployeeID);
+public record EmployeeCityQueryDto([Required, StringLength(30)] string City);
 
-public record EmployeeCityQueryDto(string City);
+public record EmployeeProjectsQueryDto([Required] Guid EmployeeID);
 
-public record EmployeeProjectsQueryDto(Guid EmployeeID);
+public record CustomerProjectsQueryDto([Required] Guid CustomerID);
 
-public record CustomerProjectsQueryDto(Guid CustomerID);
-
-public record FullTextSearchDto(string SearchTerm);
+public record FullTextSearchDto([Required] string SearchTerm);
 
 public record EmployeeProjectOuterJoinDto(Guid EmployeeID, Guid? ProjectID);
 
 public record EmployeeSubqueryDto(Guid EmployeeID, string Name);
 
-public record JsonEditDto(Guid EntityID, string JsonPropertyName, string NewValue);
+public record JsonEditDto(
+    [Required] Guid EntityID,
+    [Required, StringLength(50)] string JsonPropertyName,
+    [Required] string NewValue
+);
 
-public record JsonPropertyQueryDto(string JsonPropertyName, string Value);
+public record JsonPropertyQueryDto(
+    [Required, StringLength(50)] string JsonPropertyName,
+    [Required] string Value
+);
 
-public record EmployeeHierarchyQueryDto(Guid EmployeeID);
+public record EmployeeHierarchyQueryDto([Required] Guid EmployeeID);
 
-public record EmployeePartialAddDto(string Name, int Age);
+public record EmployeePartialAddDto(
+    [Required, StringLength(50)] string Name,
+    [Required, Range(1, 120)] int Age
+);
 
 public record EmployeeBulkInsertDto(IEnumerable<EmployeeAddDto> Employees);
 
 public record EmployeeBulkUpdateDto(IEnumerable<EmployeeUpdateNameDto> Employees);
 
-public record DynamicQueryDto(Dictionary<string, object?> Filters, Dictionary<string, bool> SortOrder);
+public record DynamicQueryDto(
+    [Required] Dictionary<string, object?> Filters,
+    [Required] Dictionary<string, bool> SortOrder
+);
 
-public record PagingAndSortingQueryDto(int PageNumber, int PageSize, string SortBy, bool Ascending);
+public record PagingAndSortingQueryDto(
+    [Required, Range(1, int.MaxValue)] int PageNumber,
+    [Required, Range(1, 100)] int PageSize,
+    [Required] string SortBy,
+    [Required] bool Ascending
+);
 
-public record EmployeeSelfJoinDto(Guid EmployeeID, Guid? ManagerID);
+public record EmployeeSelfJoinDto(
+    [Required] Guid EmployeeID,
+    Guid? ManagerID
+);
 
 public record ProjectSummaryDto(
-    Guid ProjectID,
-    string Name,
-    decimal TotalBudget,
-    byte Status,
-    DateTime StartDate,
-    DateTime EndDate,
-    float Progress,
-    byte Priority,
-    string EmployeeAssignedName,
-    int NumberOfCustomers);
+    [Required] Guid ProjectID,
+    [Required, StringLength(50)] string Name,
+    [Required, Range(0.01, double.MaxValue)] decimal TotalBudget,
+    [Required] byte Status,
+    [Required] DateTime StartDate,
+    [Required] DateTime EndDate,
+    [Required] float Progress,
+    [Required] byte Priority,
+    [StringLength(50)] string EmployeeAssignedName,
+    [Required, Range(0, int.MaxValue)] int NumberOfCustomers
+);
 
 
-public record StoredProcedureQueryDto(string Department);
+public record StoredProcedureQueryDto([Required, StringLength(20)] string Department);
 
-public record SpatialQueryDto(double Latitude, double Longitude, double Distance);
+public record SpatialQueryDto(
+    [Required, Range(-90, 90)] double Latitude,
+    [Required, Range(-180, 180)] double Longitude,
+    [Required, Range(0, double.MaxValue)] double Distance
+);
 
 
 public record EmployeeDto(
@@ -239,5 +273,24 @@ public record EmployeeHierarchyDto
     public string? ManagerName { get; init; }
 }
 
+public record SingleOperationTransactionDto(
+    [Required] Guid id1,
+    [Required, StringLength(50)] string name1,
+    [Required] Guid id2,
+    [Required, StringLength(50)] string name2
+);
 
-public record SingleOperationTransactionDto(Guid id1, string name1, Guid id2, string name2);
+public record CustomerSpatialQueryDto(
+     Guid CustomerID,
+     string Name,
+     string Email,
+     string PhoneNumber,
+     string? AddressLine1,
+     string? AddressLine2,
+     string City,
+     string Country,
+    Point? GeographicLocation,
+     int LoyaltyPoints,
+    DateTime? LastPurchaseDate,
+    string? Notes
+);
