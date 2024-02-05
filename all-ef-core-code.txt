@@ -1,0 +1,1592 @@
+```
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using NetTopologySuite.Geometries;
+
+public interface IEmployeeProjectRepository
+{
+    // Adds a new employee to the database.
+    Task AddEmployee(EmployeeAddDto employee);
+
+    // Updates the name of an employee based on the provided employee ID.
+    Task UpdateEmployeeName(EmployeeUpdateNameDto employeeUpdate);
+
+    // Deletes an employee from the database based on the provided employee ID.
+    Task DeleteEmployeeById(EmployeeDeleteDto employeeDelete);
+
+    // Retrieves a list of employees based on the provided city.
+    Task<List<GetEmployeesByCityDto>> GetEmployeesByCity(EmployeeCityQueryDto cityQuery);
+
+    // Retrieves a list of projects assigned to a specific employee.
+    Task<List<ProjectDto>> GetProjectsByEmployeeId(EmployeeProjectsQueryDto employeeProjectsQuery);
+
+    // Retrieves a list of projects associated with a specific customer.
+    Task<List<ProjectDto>> GetProjectsByCustomerId(CustomerProjectsQueryDto customerProjectsQuery);
+
+    // Performs a full-text search across relevant tables/columns.
+    Task<List<EmployeeDto>> FullTextSearch(FullTextSearchDto searchQuery);
+
+    // Demonstrates the use of an outer join in a query.
+    Task<List<EmployeeProjectOuterJoinDto>> GetEmployeeProjectsWithOuterJoin();
+
+    // Showcases a select within a select query.
+    Task<List<EmployeeSubqueryDto>> GetEmployeesWithSubquery();
+
+    // Edits the entire JSONData column for a specific entity.
+    Task EditJsonData(EditJsonDataDto editJsonDataDto);
+
+    // Appends a number to the favoriteNumbers array within the JSONData column of a specific entity.
+    Task AppendNumberToJsonData(AppendNumberToJsonDataDto appendNumberDto);
+
+    // Example method for selecting entities based on a condition within JSONData
+    Task<List<CustomerBasedOnJsonPropertyDto>> SelectCustomersWithFavoriteNumber(int favoriteNumber);
+
+    // Selects based on a property within a JSON column.
+    Task<List<CustomerBasedOnJsonPropertyDto>> SelectCustomerBasedOnJsonProperty(JsonPropertyQueryDto jsonPropertyQuery);
+
+    // Demonstrates the use of Common Table Expressions (CTE).
+    Task<List<EmployeeHierarchyDto>> GetEmployeeHierarchy(EmployeeHierarchyQueryDto hierarchyQuery);
+
+    // Demonstrates handling of partial object creation, specifically with the IsActive flag.
+    Task AddEmployeeWithPartialData(EmployeePartialAddDto employeePartial);
+
+    // Executes two different updates in a single transaction.
+    Task RunTwoUpdatesInSingleTransaction(SingleOperationTransactionDto data);
+
+    // Method to start a new transaction
+    Task<ITransaction> BeginTransactionAsync();
+
+    // Executes a single operation within a transaction.
+    Task Operation1InATransaction(Guid id, string name);
+
+    // Executes a single operation within a transaction.
+    Task Operation2InATransaction(Guid id, string name);
+
+    // Inserts a bulk list of entities efficiently.
+    Task BulkInsertEmployees(IEnumerable<EmployeeBulkInsertDto> employees);
+
+    // Updates a bulk list of entities efficiently.
+    Task BulkUpdateEmployees(IEnumerable<EmployeeBulkUpdateDto> employees);
+
+    // Dynamically generates a query based on a set of filters and sort criteria.
+    Task<List<EmployeesWithDynamicQueryDto>> GetEmployeesWithDynamicQuery(DynamicQueryDto query);
+
+    // Retrieves a paginated list of employees with sorting.
+    Task<PagedResultDto<EmployeeDto>> GetEmployeesPagedAndSorted(PagingAndSortingQueryDto query);
+
+    // Demonstrates the use of a self-join.
+    Task<List<EmployeeSelfJoinDto>> GetEmployeeManagers();
+
+    // Uses an aggregate function in a query.
+    Task<decimal> GetTotalBudgetForProjects();
+
+    // Selects data from a view.
+    Task<List<ProjectSummaryDto>> GetProjectSummaries();
+
+    // Calls a stored procedure and handles its results.
+    Task<List<EmployeeDto>> CallStoredProcedure(StoredProcedureQueryDto query);
+
+    // Performs a spatial data selection, e.g., finding customers within a certain distance.
+    Task<List<CustomerSpatialQueryDto>> GetCustomersNearLocation(SpatialQueryDto query);
+
+    // Handles database migrations with a file-based approach.
+    Task ApplyMigrations();
+}
+
+public interface ITransaction : IDisposable
+{
+    Task CommitAsync();
+    Task RollbackAsync();
+}
+
+
+public interface ITransactionService
+{
+    Task<ITransaction> BeginTransactionAsync();
+
+}
+
+
+
+public record JsonDataDto
+{
+    public string Name { get; init; }
+    public string? Category { get; init; }
+    public List<int> FavoriteNumbers { get; init; } = new();
+}
+
+public record EditJsonDataDto(
+    [Required] Guid EntityId,
+    [Required] JsonDataDto UpdatedJsonData
+);
+
+public record AppendNumberToJsonDataDto(
+    [Required] Guid EntityId,
+    [Required, Range(0, int.MaxValue)] int NumberToAppend
+); public record EmployeeAddDto(
+    [Required] Guid EmployeeID,
+    [Required, StringLength(50)] string Name,
+    [Required, Range(1, 120)] int Age,
+    [Required, StringLength(20)] string Department,
+    [Required] DateTime HireDate,
+    [Required, Range(0.01, double.MaxValue)] decimal Salary,
+    StringLength(50)] string? AddressLine1,
+    [StringLength(50)] string? AddressLine2,
+    [Required, StringLength(30)] string City,
+    [Required] DateTime CreatedOn,
+    DateTime? UpdatedOn
+);
+
+public record EmployeeUpdateNameDto(
+    [Required] Guid EmployeeID,
+    [Required, StringLength(50)] string Name
+);
+
+public record EmployeeDeleteDto([Required] Guid EmployeeID);
+
+public record EmployeeCityQueryDto([Required, StringLength(30)] string City);
+
+public record EmployeeProjectsQueryDto([Required] Guid EmployeeID);
+
+public record CustomerProjectsQueryDto([Required] Guid CustomerID);
+
+public record FullTextSearchDto([Required] string SearchTerm);
+
+public record EmployeeProjectOuterJoinDto(Guid EmployeeID, Guid? ProjectID);
+
+public record EmployeeSubqueryDto(Guid EmployeeID, string Name);
+
+public record JsonEditDto(
+    [Required] Guid EntityID,
+    [Required, StringLength(50)] string JsonPropertyName,
+    [Required] string NewValue
+);
+
+public record JsonPropertyQueryDto(
+    [Required, StringLength(50)] string JsonPropertyName,
+    [Required] string Value
+);
+
+public record EmployeeHierarchyQueryDto([Required] Guid EmployeeID);
+
+public record EmployeePartialAddDto(
+    [Required, StringLength(50)] string Name,
+    [Required, Range(1, 120)] int Age
+);
+
+public record EmployeeBulkInsertDto(IEnumerable<EmployeeAddDto> Employees);
+
+public record EmployeeBulkUpdateDto(IEnumerable<EmployeeUpdateNameDto> Employees);
+
+public record DynamicQueryDto(
+    [Required] Dictionary<string, object?> Filters,
+    [Required] Dictionary<string, bool> SortOrder
+);
+
+public record PagingAndSortingQueryDto(
+    [Required, Range(1, int.MaxValue)] int PageNumber,
+    [Required, Range(1, 100)] int PageSize,
+    [Required] string SortBy,
+    [Required] bool Ascending
+);
+
+public record EmployeeSelfJoinDto(
+    [Required] Guid EmployeeID,
+    Guid? ManagerID
+);
+
+public record ProjectSummaryDto(
+    [Required] Guid ProjectID,
+    [Required, StringLength(50)] string Name,
+    [Required, Range(0.01, double.MaxValue)] decimal TotalBudget,
+    [Required] byte Status,
+    [Required] DateTime StartDate,
+    [Required] DateTime EndDate,
+    [Required] float Progress,
+    [Required] byte Priority,
+    [StringLength(50)] string EmployeeAssignedName,
+    [Required, Range(0, int.MaxValue)] int NumberOfCustomers
+);
+
+
+public record StoredProcedureQueryDto([Required, StringLength(20)] string Department);
+
+public record SpatialQueryDto(
+    [Required, Range(-90, 90)] double Latitude,
+    [Required, Range(-180, 180)] double Longitude,
+    [Required, Range(0, double.MaxValue)] double Distance
+);
+
+
+public record EmployeeDto(
+    Guid EmployeeID,
+    string Name,
+    int? Age,
+    string Department,
+    DateTime HireDate,
+    decimal? Salary,
+    string? AddressLine1,
+    string? AddressLine2,
+    string City);
+
+public record ProjectDto(
+    Guid ProjectID,
+    string Name,
+    DateTime StartDate,
+    DateTime EndDate,
+    decimal Budget,
+    byte Status,
+    byte[] LogoSvg,
+    string? Notes,
+    float Progress,
+    byte Priority,
+    Guid? EmployeeAssigned);
+
+public record CustomerBasedOnJsonPropertyDto(
+    Guid CustomerID,
+    string Name,
+    int? Age,
+    string Email,
+    string PhoneNumber,
+    string? AddressLine1,
+    string? AddressLine2,
+    string City,
+    string Country,
+    Point? GeographicLocation,
+    int LoyaltyPoints,
+    DateTime? LastPurchaseDate,
+    string? Notes,
+    string JSONData);
+
+public record GetEmployeesByCityDto(Guid EmployeeID, string Name, string City);
+
+public record EmployeesWithDynamicQueryDto(Guid EmployeeID, string Name, Dictionary<string, object?> DynamicCriteria);
+
+public record PagedResultDto<T>(IEnumerable<T> Items, int TotalCount) where T : class;
+
+
+public record EmployeeHierarchyDto
+{
+    public Guid EmployeeId { get; init; }
+    public Guid? ManagerId { get; init; }
+    public string EmployeeName { get; init; }
+    public string? ManagerName { get; init; }
+}
+
+public record SingleOperationTransactionDto(
+    [Required] Guid id1,
+    [Required, StringLength(50)] string name1,
+    [Required] Guid id2,
+    [Required, StringLength(50)] string name2
+);
+
+public record CustomerSpatialQueryDto(
+     Guid CustomerID,
+     string Name,
+     string Email,
+     string PhoneNumber,
+     string? AddressLine1,
+     string? AddressLine2,
+     string City,
+     string Country,
+    Point? GeographicLocation,
+     int LoyaltyPoints,
+    DateTime? LastPurchaseDate,
+    string? Notes
+);
+```
+```
+CREATE TABLE Employees (
+    Id uniqueidentifier NOT NULL PRIMARY KEY DEFAULT newid(),
+    Name nvarchar(50) NOT NULL,
+    Age int,
+    Department nvarchar(20) NOT NULL,
+    HireDate datetime2 NOT NULL,
+    Salary decimal(19,4),
+    AddressLine1 nvarchar(50),
+    AddressLine2 nvarchar(50),
+    City nvarchar(30),
+    CreatedOn datetime2 NOT NULL DEFAULT SYSDATETIME(),
+    UpdatedOn datetime2 NULL,
+    IsActive bit NOT NULL DEFAULT 1
+);
+
+CREATE TABLE Projects (
+    Id uniqueidentifier NOT NULL PRIMARY KEY DEFAULT newid(),
+    Name nvarchar(50) NOT NULL,
+    StartDate datetime2 NOT NULL,
+    EndDate datetime2 NOT NULL,
+    Budget decimal(19,4) NOT NULL,
+    Status tinyint NOT NULL,
+    LogoSvg varbinary(MAX) NOT NULL,
+    Notes nvarchar(MAX),
+    Progress float NOT NULL,
+    Priority tinyint NOT NULL,
+    EmployeeAssigned uniqueidentifier,
+    FOREIGN KEY (EmployeeAssigned) REFERENCES Employees(Id),
+    CreatedOn datetime2 NOT NULL DEFAULT SYSDATETIME(),
+    UpdatedOn datetime2 NULL
+);
+
+CREATE TABLE Customers (
+    Id uniqueidentifier NOT NULL PRIMARY KEY DEFAULT newid(),
+    Name nvarchar(50) NOT NULL,
+    Age int,
+    Email nvarchar(254) NOT NULL,
+    PhoneNumber nvarchar(15),
+    AddressLine1 nvarchar(50),
+    AddressLine2 nvarchar(50),
+    City nvarchar(30) NOT NULL,
+    Country nvarchar(25) NOT NULL,
+    GeographicLocation geography,
+    LoyaltyPoints int NOT NULL,
+    LastPurchaseDate datetime2,
+    Notes nvarchar(MAX),
+    JSONData nvarchar(max) NOT NULL DEFAULT '{}',
+    CreatedOn datetime2 NOT NULL DEFAULT SYSDATETIME(),
+    UpdatedOn datetime2 NULL
+);
+
+CREATE TABLE ProjectCustomers (
+    ProjectId uniqueidentifier NOT NULL,
+    CustomerId uniqueidentifier NOT NULL,
+    StartDate date NOT NULL,
+    EndDate date NULL,
+    FOREIGN KEY (ProjectId) REFERENCES Projects(Id),
+    FOREIGN KEY (CustomerId) REFERENCES Customers(Id),
+    PRIMARY KEY (ProjectId, CustomerId),
+    CreatedOn datetime2 NOT NULL DEFAULT SYSDATETIME(),
+    UpdatedOn datetime2 NULL
+);
+
+CREATE TABLE EmployeeHierarchy (
+    EmployeeId uniqueidentifier NOT NULL,
+    ManagerId uniqueidentifier NULL,
+    FOREIGN KEY (EmployeeId) REFERENCES Employee(Id),
+    FOREIGN KEY (ManagerId) REFERENCES Employee(Id),
+    PRIMARY KEY (EmployeeId),
+    CreatedOn datetime2 NOT NULL DEFAULT SYSDATETIME(),
+    UpdatedOn datetime2 NULL
+);
+
+CREATE VIEW ProjectSummaries AS
+SELECT
+    p.Id AS ProjectID,
+    p.Name,
+    p.Budget AS TotalBudget,
+    p.Status,
+    p.StartDate,
+    p.EndDate,
+    p.Progress,
+    p.Priority,
+    e.Name AS EmployeeAssignedName,
+    (SELECT COUNT(*) FROM ProjectCustomers WHERE ProjectId = p.Id) AS NumberOfCustomers
+FROM
+    Projects p
+LEFT JOIN Employees e ON p.EmployeeAssigned = e.Id;
+
+
+CREATE PROCEDURE GetEmployeesByDepartment
+    @Department NVARCHAR(20)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT
+        Id AS EmployeeID,
+        Name,
+        Age,
+        Department,
+        HireDate,
+        Salary,
+        AddressLine1,
+        AddressLine2,
+        City
+    FROM Employees
+    WHERE Department = @Department
+END
+
+
+CREATE TABLE AppliedMigrations (
+    MigrationId INT IDENTITY(1,1) PRIMARY KEY,
+    ScriptName VARCHAR(255) NOT NULL,
+    AppliedBy VARCHAR(255) NOT NULL,
+    AppliedAt DATETIME NOT NULL
+);
+
+
+CREATE TABLE MigrationLock (
+    LockId INT PRIMARY KEY,
+    IsLocked BIT NOT NULL,
+    LockedBy VARCHAR(255),
+    LockAcquiredAt DATETIME
+);
+
+
+```
+```
+using Microsoft.EntityFrameworkCore;
+using System;
+
+public class AppDbContext : DbContext
+{
+    // DbSet definitions for your entities
+    public DbSet<Employee> Employees { get; set; }
+    public DbSet<Project> Projects { get; set; }
+    public DbSet<Customer> Customers { get; set; }
+    public DbSet<ProjectCustomer> ProjectCustomers { get; set; }
+    public DbSet<EmployeeHierarchy> EmployeeHierarchies { get; set; }
+    public DbSet<ProjectSummaryDto> ProjectSummaries { get; set; } // For read-only view
+
+    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+    {
+    }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+        // Configuring ProjectSummaryDto to map to a database view
+        modelBuilder.Entity<ProjectSummaryDto>()
+            .HasNoKey()
+            .ToView("ProjectSummaries");
+
+        // Example configurations for other entities
+
+        // Employee entity configuration
+        modelBuilder.Entity<Employee>(entity =>
+        {
+            entity.ToTable("Employees");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(50);
+            entity.Property(e => e.Department).IsRequired().HasMaxLength(20);
+            // Configure one-to-many or many-to-many relationships here
+            // Example for one-to-many: Employee to Projects
+            entity.HasMany(e => e.AssignedProjects)
+                  .WithOne(p => p.Employee)
+                  .HasForeignKey(p => p.EmployeeAssigned);
+        });
+
+        // Project entity configuration
+        modelBuilder.Entity<Project>(entity =>
+        {
+            entity.ToTable("Projects");
+            entity.HasKey(p => p.Id);
+            entity.Property(p => p.Name).IsRequired().HasMaxLength(50);
+            entity.Property(p => p.Budget).HasColumnType("decimal(19, 4)");
+            // If using enums and want to store them as string
+            entity.Property(e => e.Status)
+                  .HasConversion<string>();
+            // Relationships are configured in the Employee entity
+        });
+
+        // Customer entity configuration
+        modelBuilder.Entity<Customer>(entity =>
+        {
+            entity.ToTable("Customers");
+            entity.HasKey(c => c.Id);
+            entity.Property(c => c.Name).IsRequired().HasMaxLength(50);
+            entity.Property(c => c.Email).IsRequired().HasMaxLength(254);
+            // JSON column configuration, if using SQL Server or a database that supports JSON columns
+            entity.Property(c => c.JSONData).HasColumnType("nvarchar(max)");
+        });
+
+    }
+}
+```
+```
+public class EfCoreTransaction : ITransaction
+{
+    private readonly IDbContextTransaction _dbContextTransaction;
+
+    public EfCoreTransaction(IDbContextTransaction dbContextTransaction)
+    {
+        _dbContextTransaction = dbContextTransaction;
+    }
+
+    public async Task CommitAsync()
+    {
+        await _dbContextTransaction.CommitAsync();
+    }
+
+    public async Task RollbackAsync()
+    {
+        await _dbContextTransaction.RollbackAsync();
+    }
+
+    public void Dispose()
+    {
+        _dbContextTransaction.Dispose();
+    }
+}
+```
+```
+using Microsoft.EntityFrameworkCore;
+using NetTopologySuite;
+using NetTopologySuite.Geometries;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Text.Json;
+
+public class EmployeeProjectRepository : IEmployeeProjectRepository
+{
+    private readonly AppDbContext _context;
+
+    public EmployeeProjectRepository(AppDbContext context)
+    {
+        _context = context;
+    }
+
+    public async Task<ITransaction> BeginTransactionAsync()
+    {
+        var dbContextTransaction = await _context.Database.BeginTransactionAsync();
+        return new EfCoreTransaction(dbContextTransaction);
+    }
+
+    public async Task AddEmployee(EmployeeAddDto employeeDto)
+    {
+        var employee = new Employee
+        {
+            Id = employeeDto.EmployeeID,
+            Name = employeeDto.Name,
+            Age = employeeDto.Age,
+            Department = employeeDto.Department,
+            HireDate = employeeDto.HireDate,
+            Salary = employeeDto.Salary,
+            AddressLine1 = employeeDto.AddressLine1,
+            AddressLine2 = employeeDto.AddressLine2,
+            City = employeeDto.City,
+            CreatedOn = DateTime.UtcNow,
+            UpdatedOn = null
+        };
+
+        await _context.Employees.AddAsync(employee);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task UpdateEmployeeName(EmployeeUpdateNameDto employeeUpdate)
+    {
+        var employee = await _context.Employees.FindAsync(employeeUpdate.EmployeeID);
+        if (employee != null)
+        {
+            employee.Name = employeeUpdate.Name;
+            await _context.SaveChangesAsync();
+        }
+    }
+
+    public async Task DeleteEmployeeById(EmployeeDeleteDto employeeDelete)
+    {
+        var employee = await _context.Employees.FindAsync(employeeDelete.EmployeeID);
+        if (employee != null)
+        {
+            _context.Employees.Remove(employee);
+            await _context.SaveChangesAsync();
+        }
+    }
+
+    public async Task<List<GetEmployeesByCityDto>> GetEmployeesByCity(EmployeeCityQueryDto cityQuery)
+    {
+        return await _context.Employees
+                             .Where(e => e.City == cityQuery.City)
+                             .Select(e => new GetEmployeesByCityDto(e.Id, e.Name, e.City))
+                             .ToListAsync();
+    }
+
+    public async Task<List<ProjectDto>> GetProjectsByEmployeeId(EmployeeProjectsQueryDto employeeProjectsQuery)
+    {
+        return await _context.Projects
+                             .Where(p => p.EmployeeAssigned == employeeProjectsQuery.EmployeeID)
+                             .Select(p => new ProjectDto
+                             {
+                                 ProjectID = p.Id,
+                                 Name = p.Name,
+                                 StartDate = p.StartDate,
+                                 EndDate = p.EndDate,
+                                 Budget = p.Budget,
+                                 Status = (byte)p.Status,
+                                 LogoSvg = p.LogoSvg,
+                                 Notes = p.Notes,
+                                 Progress = p.Progress,
+                                 Priority = (byte)p.Priority,
+                                 EmployeeAssigned = p.EmployeeAssigned
+                             })
+                             .ToListAsync();
+    }
+
+    public async Task<List<ProjectDto>> GetProjectsByCustomerId(CustomerProjectsQueryDto customerProjectsQuery)
+    {
+        // Querying the database to find all projects associated with the given customer ID.
+        var projects = await _context.Projects
+            .Where(p => _context.ProjectCustomers
+                .Any(pc => pc.CustomerId == customerProjectsQuery.CustomerID && pc.ProjectId == p.Id))
+            .Select(p => new ProjectDto
+            {
+                ProjectID = p.Id,
+                Name = p.Name,
+                StartDate = p.StartDate,
+                EndDate = p.EndDate,
+                Budget = p.Budget,
+                Status = (byte)p.Status, // Assuming you will convert the enum to its byte value here
+                LogoSvg = p.LogoSvg,
+                Notes = p.Notes,
+                Progress = p.Progress,
+                Priority = (byte)p.Priority, // Similarly, converting the enum to its byte value
+                EmployeeAssigned = p.EmployeeAssigned,
+                CreatedOn = p.CreatedOn,
+                UpdatedOn = p.UpdatedOn
+            })
+            .ToListAsync();
+
+        return projects;
+    }
+
+    public async Task<List<EmployeeDto>> FullTextSearch(FullTextSearchDto searchQuery)
+    {
+        var employees = await _context.Employees
+            .Where(e => EF.Functions.FreeText(e.Name, searchQuery.SearchTerm) ||
+                        EF.Functions.FreeText(e.Department, searchQuery.SearchTerm))
+            .Select(e => new EmployeeDto
+            {
+                EmployeeID = e.Id,
+                Name = e.Name,
+                Age = e.Age,
+                Gender = e.Gender,
+                Department = e.Department,
+                HireDate = e.HireDate,
+                Salary = e.Salary ?? 0M, // Assuming Salary is a nullable decimal and providing a default value if null
+                AddressLine1 = e.AddressLine1,
+                AddressLine2 = e.AddressLine2,
+                City = e.City
+            })
+            .ToListAsync();
+
+        return employees;
+    }
+
+    public async Task<List<EmployeeProjectOuterJoinDto>> GetEmployeeProjectsWithOuterJoin()
+    {
+        // Query to perform a left outer join between Employees and Projects
+        var query = from employee in _context.Employees
+                    join project in _context.Projects
+                    on employee.Id equals project.EmployeeAssigned into projectGroup
+                    from subProject in projectGroup.DefaultIfEmpty() // Ensures it's a left outer join
+                    select new EmployeeProjectOuterJoinDto
+                    {
+                        EmployeeID = employee.Id,
+                        ProjectID = subProject != null ? subProject.Id : (Guid?)null
+                    };
+
+        return await query.ToListAsync();
+    }
+
+
+    public async Task<List<EmployeeSubqueryDto>> GetEmployeesWithSubquery()
+    {
+        // Define a threshold for project budgets
+        var budgetThreshold = 100000M;
+
+        var employeesWithHighBudgetProjects = await _context.Employees
+            .Where(e => _context.Projects
+                .Any(p => p.EmployeeAssigned == e.Id && p.Budget > budgetThreshold))
+            .Select(e => new EmployeeSubqueryDto
+            {
+                EmployeeID = e.Id,
+                Name = e.Name
+            })
+            .ToListAsync();
+
+        return employeesWithHighBudgetProjects;
+    }
+
+    public async Task EditJsonData(EditJsonDataDto editJsonDataDto)
+    {
+        var customer = await _context.Customers
+            .FirstOrDefaultAsync(c => c.Id == editJsonDataDto.EntityId);
+
+        if (customer != null)
+        {
+            // Assuming JsonDataDto can be directly serialized into JSON string
+            // You might need to adjust serialization settings based on your requirements
+            customer.JSONData = JsonSerializer.Serialize(editJsonDataDto.UpdatedJsonData);
+            await _context.SaveChangesAsync();
+        }
+    }
+
+    public async Task<List<CustomerBasedOnJsonPropertyDto>> SelectCustomersWithFavoriteNumber(int favoriteNumber)
+    {
+        return await _context.Customers
+            .Where(c => EF.Functions.JsonContains(c.JSONData, JsonSerializer.Serialize(favoriteNumber), "$.FavoriteNumbers"))
+            .Select(c => new CustomerBasedOnJsonPropertyDto
+            {
+                CustomerID = c.Id,
+                Name = c.Name,
+                Age = c.Age,
+                Email = c.Email,
+                PhoneNumber = c.PhoneNumber,
+                AddressLine1 = c.AddressLine1,
+                AddressLine2 = c.AddressLine2,
+                City = c.City,
+                Country = c.Country,
+                GeographicLocation = c.GeographicLocation,
+                LoyaltyPoints = c.LoyaltyPoints,
+                LastPurchaseDate = c.LastPurchaseDate,
+                Notes = c.Notes,
+                JSONData = c.JSONData
+            })
+            .ToListAsync();
+    }
+
+
+    public async Task AppendNumberToJsonData(AppendNumberToJsonDataDto appendNumberDto)
+    {
+        var customer = await _context.Customers
+            .FirstOrDefaultAsync(c => c.Id == appendNumberDto.EntityId);
+
+        if (customer != null)
+        {
+            var jsonData = JsonSerializer.Deserialize<JsonDataDto>(customer.JSONData) ?? new JsonDataDto();
+            jsonData.FavoriteNumbers.Add(appendNumberDto.NumberToAppend);
+            customer.JSONData = JsonSerializer.Serialize(jsonData);
+            await _context.SaveChangesAsync();
+        }
+    }
+
+
+    public async Task<List<CustomerBasedOnJsonPropertyDto>> SelectCustomerBasedOnJsonProperty(JsonPropertyQueryDto jsonPropertyQuery)
+    {
+        var query = _context.Customers
+            .Where(c => EF.Functions.JsonValue(c.JSONData, $"$.{jsonPropertyQuery.JsonPropertyName}") == jsonPropertyQuery.Value)
+            .Select(c => new CustomerBasedOnJsonPropertyDto
+            {
+                CustomerID = c.Id,
+                Name = c.Name,
+                Age = c.Age,
+                Email = c.Email,
+                PhoneNumber = c.PhoneNumber,
+                AddressLine1 = c.AddressLine1,
+                AddressLine2 = c.AddressLine2,
+                City = c.City,
+                Country = c.Country,
+                GeographicLocation = c.GeographicLocation,
+                LoyaltyPoints = c.LoyaltyPoints,
+                LastPurchaseDate = c.LastPurchaseDate,
+                Notes = c.Notes,
+                JSONData = c.JSONData
+            });
+
+        return await query.ToListAsync();
+    }
+
+    public async Task<List<EmployeeHierarchyDto>> GetEmployeeHierarchy(EmployeeHierarchyQueryDto hierarchyQuery)
+    {
+        var cteQuery = @"
+WITH RECURSIVE EmployeeCTE AS (
+    SELECT e.Id AS EmployeeId, e.Name AS EmployeeName, eh.ManagerId, m.Name AS ManagerName
+    FROM Employees e
+    LEFT JOIN EmployeeHierarchy eh ON e.Id = eh.EmployeeId
+    LEFT JOIN Employees m ON eh.ManagerId = m.Id
+    WHERE e.Id = {0}
+    UNION ALL
+    SELECT e.Id, e.Name, eh.ManagerId, m.Name
+    FROM Employees e
+    INNER JOIN EmployeeHierarchy eh ON e.Id = eh.EmployeeId
+    INNER JOIN EmployeeCTE ecte ON eh.ManagerId = ecte.EmployeeId
+    LEFT JOIN Employees m ON eh.ManagerId = m.Id
+)
+SELECT * FROM EmployeeCTE";
+
+        var employeeHierarchies = await _context.EmployeeHierarchies
+            .FromSqlRaw(cteQuery, hierarchyQuery.EmployeeID)
+            .Select(eh => new EmployeeHierarchyDto
+            {
+                EmployeeId = eh.EmployeeId,
+                ManagerId = eh.ManagerId,
+                EmployeeName = eh.EmployeeName,
+                ManagerName = eh.ManagerName
+            }).ToListAsync();
+
+        return employeeHierarchies;
+    }
+
+
+    public async Task AddEmployeeWithPartialData(EmployeePartialAddDto employeePartial)
+    {
+        var employee = new Employee
+        {
+            // Id is auto-generated by the database with DEFAULT newid(), no need to set it here.
+            // modelBuilder.Entity<Employee>()
+            // .Property(e => e.Id)
+            // .HasDefaultValueSql("newid()");
+            Name = employeePartial.Name,
+            Age = employeePartial.Age,
+            Department = "DefaultDepartment",
+            HireDate = DateTime.UtcNow,
+
+            CreatedOn = DateTime.UtcNow, // Explicitly set to ensure it matches the intended default behavior
+                                         // or
+                                         //    modelBuilder.Entity<Employee>()
+                                         //       .Property(e => e.CreatedOn)
+                                         //       .HasDefaultValueSql("SYSDATETIME()")
+                                         //       .ValueGeneratedOnAdd();
+            IsActive = true // Explicitly set to ensure it matches the intended default behavior
+        };
+
+        await _context.Employees.AddAsync(employee);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task RunTwoUpdatesInSingleTransaction(SingleOperationTransactionDto data)
+    {
+        var transaction = _context.Database.BeginTransaction();
+        try
+        {
+            var employee1 = await _context.Employees.FindAsync(data.Id1);
+            if (employee1 != null)
+            {
+                employee1.Name = data.Name1;
+            }
+
+            var employee2 = await _context.Employees.FindAsync(data.Id2);
+            if (employee2 != null)
+            {
+                employee2.Name = data.Name2;
+            }
+
+            await _context.SaveChangesAsync();
+            await transaction.CommitAsync();
+        }
+        catch
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
+        finally
+        {
+            await transaction.DisposeAsync();
+        }
+    }
+
+    public async Task BulkInsertEmployees(IEnumerable<EmployeeBulkInsertDto> employeeDtos)
+    {
+        // Use EF Core Bulk Extensions for more performance
+
+        var employees = employeeDtos.Select(dto => new Employee
+        {
+            Id = dto.EmployeeID,
+            Name = dto.Name,
+            Age = dto.Age,
+            Department = dto.Department,
+            HireDate = dto.HireDate,
+            Salary = dto.Salary,
+            AddressLine1 = dto.AddressLine1,
+            AddressLine2 = dto.AddressLine2,
+            City = dto.City,
+            CreatedOn = DateTime.UtcNow,
+            IsActive = true
+        });
+
+        _context.ChangeTracker.AutoDetectChangesEnabled = false; // Improve performance for bulk insert
+
+        await _context.Employees.AddRangeAsync(employees);
+        await _context.SaveChangesAsync();
+
+        _context.ChangeTracker.AutoDetectChangesEnabled = true; // Re-enable auto-detect changes after the bulk insert
+    }
+
+    public async Task BulkUpdateEmployees(IEnumerable<EmployeeBulkUpdateDto> employeeDtos)
+    {
+        // Use EF Core Bulk Extensions for more performance
+        //      var employeesToUpdate = employeeDtos.Select(dto => new Employee
+        // {
+        //     Id = dto.EmployeeID,
+        //     Name = dto.Name,
+        // }).ToList();
+
+        // await _context.BulkUpdateAsync(employeesToUpdate);
+
+        _context.ChangeTracker.AutoDetectChangesEnabled = false; // Improve performance
+
+        foreach (var dto in employeeDtos)
+        {
+            var employee = await _context.Employees.FindAsync(dto.EmployeeID);
+            if (employee != null)
+            {
+                employee.Name = dto.Name;
+                // Apply other updates as necessary
+            }
+        }
+
+        await _context.SaveChangesAsync();
+        _context.ChangeTracker.AutoDetectChangesEnabled = true;
+    }
+
+    public async Task<List<EmployeesWithDynamicQueryDto>> GetEmployeesWithDynamicQuery(DynamicQueryDto query)
+    {
+        // Starting with a base query
+        IQueryable<Employee> baseQuery = _context.Employees;
+
+        // Dynamically applying filters
+        foreach (var filter in query.Filters)
+        {
+            switch (filter.Key.ToLower())
+            {
+                case "name":
+                    baseQuery = baseQuery.Where(e => EF.Functions.Like(e.Name, $"%{filter.Value}%"));
+                    break;
+                case "department":
+                    baseQuery = baseQuery.Where(e => EF.Functions.Like(e.Department, $"%{filter.Value}%"));
+                    break;
+                case "age":
+                    if (filter.Value is int age)
+                    {
+                        baseQuery = baseQuery.Where(e => e.Age == age);
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        // Preparing for sorting - defaulting to Name if no sort criteria provided
+        var sortProperty = query.SortOrder.FirstOrDefault();
+        if (string.IsNullOrEmpty(sortProperty.Key))
+        {
+            baseQuery = baseQuery.OrderBy(e => e.Name);
+        }
+        else
+        {
+            switch (sortProperty.Key.ToLower())
+            {
+                case "name":
+                    baseQuery = sortProperty.Value ? baseQuery.OrderBy(e => e.Name) : baseQuery.OrderByDescending(e => e.Name);
+                    break;
+                case "age":
+                    baseQuery = sortProperty.Value ? baseQuery.OrderBy(e => e.Age) : baseQuery.OrderByDescending(e => e.Age);
+                    break;
+                default:
+                    baseQuery = baseQuery.OrderBy(e => e.Name); // Fallback sorting
+                    break;
+            }
+        }
+
+        // Projecting the final query to DTO
+        var result = await baseQuery.Select(e => new EmployeesWithDynamicQueryDto
+        {
+            EmployeeID = e.Id,
+            Name = e.Name,
+            DynamicCriteria = query.Filters
+        }).ToListAsync();
+
+        return result;
+    }
+
+
+    public async Task<PagedResultDto<EmployeeDto>> GetEmployeesPagedAndSorted(PagingAndSortingQueryDto query)
+    {
+        // Base query from Employees table
+        IQueryable<Employee> baseQuery = _context.Employees;
+
+        // Applying sorting
+        switch (query.SortBy.ToLower())
+        {
+            case "name":
+                baseQuery = query.Ascending ? baseQuery.OrderBy(e => e.Name) : baseQuery.OrderByDescending(e => e.Name);
+                break;
+            case "department":
+                baseQuery = query.Ascending ? baseQuery.OrderBy(e => e.Department) : baseQuery.OrderByDescending(e => e.Department);
+                break;
+            case "age":
+                baseQuery = query.Ascending ? baseQuery.OrderBy(e => e.Age) : baseQuery.OrderByDescending(e => e.Age);
+                break;
+            // Default sorting by Name if no valid sort by provided
+            default:
+                baseQuery = baseQuery.OrderBy(e => e.Name);
+                break;
+        }
+
+        // Count total items for pagination metadata before applying pagination
+        int totalCount = await baseQuery.CountAsync();
+
+        // Applying pagination
+        var pagedQuery = baseQuery
+            .Skip((query.PageNumber - 1) * query.PageSize)
+            .Take(query.PageSize);
+
+        // Projecting to DTO
+        var items = await pagedQuery.Select(e => new EmployeeDto
+        {
+            EmployeeID = e.Id,
+            Name = e.Name,
+            Age = e.Age,
+            Department = e.Department,
+            HireDate = e.HireDate,
+            Salary = e.Salary,
+            AddressLine1 = e.AddressLine1,
+            AddressLine2 = e.AddressLine2,
+            City = e.City
+        }).ToListAsync();
+
+        // Constructing the result with pagination metadata
+        var result = new PagedResultDto<EmployeeDto>(items, totalCount);
+
+        return result;
+    }
+
+    public async Task<List<EmployeeSelfJoinDto>> GetEmployeeManagers()
+    {
+        // Performing a self-join on the Employees table to link each employee with their manager
+        var query = from employee in _context.Employees
+                    join manager in _context.Employees on employee.EmployeeHierarchy.ManagerId equals manager.Id into managerGroup
+                    from m in managerGroup.DefaultIfEmpty() // This ensures that employees without managers are included in the results
+                    select new EmployeeSelfJoinDto
+                    {
+                        EmployeeID = employee.Id,
+                        ManagerID = m != null ? m.Id : (Guid?)null, // If there's no manager, ManagerID will be null
+                        EmployeeName = employee.Name,
+                        ManagerName = m != null ? m.Name : null // If there's no manager, ManagerName will be null
+                    };
+
+        return await query.ToListAsync();
+    }
+
+    public async Task<decimal> GetTotalBudgetForProjects()
+    {
+        // Calculate the total budget by summing the Budget column of all projects
+        var totalBudget = await _context.Projects.SumAsync(p => p.Budget);
+
+        return totalBudget;
+    }
+
+    public async Task<List<ProjectSummaryDto>> GetProjectSummaries()
+    {
+        return await _context.ProjectSummaries.ToListAsync();
+    }
+
+    public async Task<List<EmployeeDto>> CallStoredProcedure(StoredProcedureQueryDto query)
+    {
+        // Assuming the stored procedure name is "GetEmployeesByDepartment"
+        var procedureName = "GetEmployeesByDepartment";
+        var departmentParam = new Microsoft.Data.SqlClient.SqlParameter("@Department", query.Department);
+
+        // Execute the stored procedure and map the results to the EmployeeDto
+        var employees = await _context.Employees
+            .FromSqlRaw($"EXEC {procedureName} @Department", departmentParam)
+            .Select(e => new EmployeeDto
+            {
+                EmployeeID = e.Id,
+                Name = e.Name,
+                Age = e.Age,
+                Department = e.Department,
+                HireDate = e.HireDate,
+                Salary = e.Salary,
+                AddressLine1 = e.AddressLine1,
+                AddressLine2 = e.AddressLine2,
+                City = e.City
+            }).ToListAsync();
+
+        return employees;
+    }
+
+
+
+    public async Task<List<CustomerSpatialQueryDto>> GetCustomersNearLocation(SpatialQueryDto query)
+    {
+        // Ensure the geometry factory's SRID matches your database SRID for geographic locations.
+        // 4326 is commonly used for GPS coordinates.
+        var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326);
+
+        // Create a point representing the query location
+        var queryLocation = geometryFactory.CreatePoint(new Coordinate(query.Longitude, query.Latitude));
+
+        // Query customers within the specified distance from the query location
+        var customers = await _context.Customers
+            .Where(c => c.GeographicLocation.IsWithinDistance(queryLocation, query.Distance))
+            .Select(c => new CustomerSpatialQueryDto
+            {
+                CustomerID = c.Id,
+                Name = c.Name,
+                Email = c.Email,
+                PhoneNumber = c.PhoneNumber,
+                AddressLine1 = c.AddressLine1,
+                AddressLine2 = c.AddressLine2,
+                City = c.City,
+                Country = c.Country,
+                GeographicLocation = c.GeographicLocation,
+                LoyaltyPoints = c.LoyaltyPoints,
+                LastPurchaseDate = c.LastPurchaseDate,
+                Notes = c.Notes
+            })
+            .ToListAsync();
+
+        return customers;
+    }
+
+
+
+}
+```
+```
+public class EmployeeService
+{
+    private readonly IEmployeeProjectRepository _repository;
+    private readonly ITransactionService _transactionService;
+
+    public EmployeeService(ITransactionService transactionService, IEmployeeProjectRepository repository)
+    {
+        _transactionService = transactionService;
+        _repository = repository;
+    }
+
+    public async Task UpdateTwoEmployeesInTransaction(Guid employeeId1, string newName1, Guid employeeId2, string newName2)
+    {
+        using var transaction = await _transactionService.BeginTransactionAsync();
+
+        try
+        {
+            await _repository.Operation1InATransaction(employeeId1, newName1);
+            await _repository.Operation2InATransaction(employeeId2, newName2);
+
+            await transaction.CommitAsync();
+        }
+        catch
+        {
+            await transaction.RollbackAsync();
+            throw; // Rethrow the exception for further handling
+        }
+    }
+}
+```
+```
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using NetTopologySuite.Geometries;
+
+public enum ProjectStatus
+{
+    Planned,
+    InProgress,
+    Completed,
+    OnHold
+}
+
+public enum ProjectPriority
+{
+    Low,
+    Medium,
+    High,
+    Critical
+}
+
+
+[Table("Employees")]
+public class Employee
+{
+    [Key]
+    public Guid Id { get; set; } = Guid.NewGuid();
+
+    public string Name { get; set; }
+
+    public int? Age { get; set; }
+
+    public string Department { get; set; }
+
+    public DateTime HireDate { get; set; }
+
+    [Column(TypeName = "decimal(19, 4)")]
+    public decimal? Salary { get; set; }
+
+    public string? AddressLine1 { get; set; }
+
+    public string? AddressLine2 { get; set; }
+
+    public string City { get; set; }
+
+    public DateTime CreatedOn { get; set; }
+
+    public DateTime? UpdatedOn { get; set; }
+
+    public bool IsActive { get; set; }
+
+    // Navigation properties
+    public virtual ICollection<Project> AssignedProjects { get; set; } = new List<Project>();
+    public virtual EmployeeHierarchy? EmployeeHierarchy { get; set; }
+}
+
+
+
+
+
+[Table("Projects")]
+public class Project
+{
+    [Key]
+    public Guid Id { get; set; } = Guid.NewGuid();
+
+    public string Name { get; set; }
+
+    public DateTime StartDate { get; set; }
+
+    public DateTime EndDate { get; set; }
+
+    [Column(TypeName = "decimal(19, 4)")]
+    public decimal Budget { get; set; }
+
+    public ProjectStatus Status { get; set; }
+
+    public byte[] LogoSvg { get; set; }
+
+    public string? Notes { get; set; }
+
+    public float Progress { get; set; }
+
+    public ProjectPriority Priority { get; set; }
+
+    public Guid? EmployeeAssigned { get; set; }
+
+    public DateTime CreatedOn { get; set; }
+
+    public DateTime? UpdatedOn { get; set; }
+
+    // Navigation properties
+    [ForeignKey("EmployeeAssigned")]
+    public virtual Employee? Employee { get; set; }
+}
+
+
+
+
+
+
+[Table("Customers")]
+public class Customer
+{
+    [Key]
+    public Guid Id { get; set; } = Guid.NewGuid();
+
+    public string Name { get; set; }
+
+    public int? Age { get; set; }
+
+    public string Email { get; set; }
+
+    public string? PhoneNumber { get; set; }
+
+    public string? AddressLine1 { get; set; }
+
+    public string? AddressLine2 { get; set; }
+
+    public string City { get; set; }
+
+    public string Country { get; set; }
+
+    public Point? GeographicLocation { get; set; }
+
+    public int LoyaltyPoints { get; set; }
+
+    public DateTime? LastPurchaseDate { get; set; }
+
+    public string? Notes { get; set; }
+
+    [Column(TypeName = "nvarchar(max)")]
+    public string JSONData { get; set; } = "{}";
+
+    public DateTime CreatedOn { get; set; }
+
+    public DateTime? UpdatedOn { get; set; }
+}
+
+
+
+
+
+
+[Table("ProjectCustomers")]
+public class ProjectCustomer
+{
+    [Key, Column(Order = 0)]
+    public Guid ProjectId { get; set; }
+
+    [Key, Column(Order = 1)]
+    public Guid CustomerId { get; set; }
+
+    public DateTime StartDate { get; set; }
+
+    public DateTime? EndDate { get; set; }
+
+    public DateTime CreatedOn { get; set; }
+
+    public DateTime? UpdatedOn { get; set; }
+
+
+
+    // Navigation properties
+    [ForeignKey("ProjectId")]
+    public virtual Project Project { get; set; }
+
+    [ForeignKey("CustomerId")]
+    public virtual Customer Customer { get; set; }
+}
+
+
+
+
+
+[Table("EmployeeHierarchy")]
+public class EmployeeHierarchy
+{
+    [Key]
+    public Guid EmployeeId { get; set; }
+
+    public Guid? ManagerId { get; set; }
+
+    public DateTime CreatedOn { get; set; }
+
+    public DateTime? UpdatedOn { get; set; }
+
+    // Navigation properties
+    [ForeignKey("EmployeeId")]
+    public virtual Employee Employee { get; set; }
+
+    [ForeignKey("ManagerId")]
+    public virtual Employee? Manager { get; set; }
+}
+```
+```
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+
+public class MigrationService
+{
+    private readonly AppDbContext _context;
+    private readonly string _migrationScriptsPath;
+
+    public MigrationService(AppDbContext context, string migrationScriptsPath)
+    {
+        _context = context;
+        _migrationScriptsPath = migrationScriptsPath;
+    }
+    public async Task ApplyMigrations()
+    {
+        var instanceId = Guid.NewGuid().ToString(); // Unique identifier for this instance
+        var migrationFiles = Directory.GetFiles(_migrationScriptsPath, "*.sql").OrderBy(f => f);
+        var migrationFileNames = migrationFiles.Select(Path.GetFileName).ToHashSet();
+
+        // Retrieve all migrations that have been applied from the database
+        var appliedMigrations = await _context.AppliedMigrations.Select(m => m.ScriptName).ToListAsync();
+
+        // Check if any applied migrations are missing from the disk
+        var missingMigrations = appliedMigrations.Except(migrationFileNames).ToList();
+        if (missingMigrations.Any())
+        {
+            throw new InvalidOperationException($"The following migrations have been applied to the database but are missing from disk: {string.Join(", ", missingMigrations)}");
+        }
+
+        foreach (var file in migrationFiles)
+        {
+            var scriptName = Path.GetFileName(file);
+            var alreadyApplied = appliedMigrations.Contains(scriptName);
+            if (!alreadyApplied)
+            {
+                if (await TryAcquireLockAsync(instanceId))
+                {
+                    try
+                    {
+                        // Start a transaction for each script execution
+                        using (var transaction = await _context.Database.BeginTransactionAsync())
+                        {
+                            var script = await File.ReadAllTextAsync(file);
+                            await _context.Database.ExecuteSqlRawAsync(script);
+
+                            // Log the migration as applied
+                            await _context.AppliedMigrations.AddAsync(new AppliedMigration
+                            {
+                                ScriptName = scriptName,
+                                AppliedBy = instanceId,
+                                AppliedAt = DateTime.UtcNow
+                            });
+                            await _context.SaveChangesAsync();
+
+                            // Commit the transaction if script executes successfully
+                            await transaction.CommitAsync();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        // Rollback is handled automatically by the using statement if an exception occurs
+
+                        // Release the lock in case of failure
+                        await ReleaseLockAsync();
+
+                        // Rethrow the exception to stop the application
+                        throw new Exception($"Failed to apply migration script {scriptName}: {ex.Message}", ex);
+                    }
+                    finally
+                    {
+                        // Ensure the lock is released after attempting to apply the migration
+                        await ReleaseLockAsync();
+                    }
+                }
+            }
+        }
+    }
+
+
+    public async Task<bool> TryAcquireLockAsync(string instanceId)
+    {
+        const int lockId = 1; // Assuming a single lock record with a known ID for simplicity
+
+        // Start a transaction
+        using (var transaction = await _context.Database.BeginTransactionAsync(System.Data.IsolationLevel.Serializable))
+        {
+            try
+            {
+                // Attempt to acquire the lock using UPDLOCK and ROWLOCK hints to prevent other transactions from modifying or reading the row
+                var lockRecord = await _context.MigrationLocks
+                    .FromSqlInterpolated($"SELECT * FROM MigrationLock WITH (UPDLOCK, ROWLOCK) WHERE LockId = {lockId}")
+                    .FirstOrDefaultAsync();
+
+                if (lockRecord == null)
+                {
+                    // Initialize lock record if not present
+                    lockRecord = new MigrationLock { LockId = lockId, IsLocked = false, LockedBy = null, LockAcquiredAt = null };
+                    _context.MigrationLocks.Add(lockRecord);
+                    await _context.SaveChangesAsync();
+                }
+
+                if (!lockRecord.IsLocked)
+                {
+                    // Acquire the lock
+                    lockRecord.IsLocked = true;
+                    lockRecord.LockedBy = instanceId;
+                    lockRecord.LockAcquiredAt = DateTime.UtcNow;
+                    await _context.SaveChangesAsync();
+
+                    // Commit the transaction to release the lock
+                    await transaction.CommitAsync();
+
+                    return true; // Successfully acquired the lock
+                }
+
+                // Lock is already held by another instance, do not commit the transaction
+                return false;
+            }
+            catch
+            {
+                // Ensure the transaction is rolled back if an exception occurs
+                await transaction.RollbackAsync();
+                throw;
+            }
+        }
+    }
+
+
+
+    public async Task ReleaseLockAsync()
+    {
+        const int lockId = 1; // Assuming you're working with a single, known lock record
+
+        // It's important to handle this operation as a transaction to ensure atomicity
+        using (var transaction = await _context.Database.BeginTransactionAsync())
+        {
+            try
+            {
+                var lockRecord = await _context.MigrationLocks.FindAsync(lockId);
+                if (lockRecord != null && lockRecord.IsLocked)
+                {
+                    // Release the lock
+                    lockRecord.IsLocked = false;
+                    lockRecord.LockedBy = null;
+                    lockRecord.LockAcquiredAt = null;
+                    await _context.SaveChangesAsync();
+
+                    // Commit the transaction to finalize the lock release
+                    await transaction.CommitAsync();
+                }
+            }
+            catch
+            {
+                // Roll back the transaction if there's an error
+                await transaction.RollbackAsync();
+                throw; // Re-throw the exception to be handled by the caller
+            }
+        }
+    }
+
+
+}
+```
+Program.cs:
+```
+var builder = WebApplication.CreateBuilder(args);
+
+// Other configurations...
+
+var connectionString = builder.Configuration.GetConnectionString("YourConnectionStringName");
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(connectionString, x => x.UseNetTopologySuite()));
+
+// Read the migration scripts path from configuration
+var migrationScriptsPath = builder.Configuration.GetValue<string>("MigrationSettings:ScriptsPath");
+
+// Register the MigrationService with the DI container
+builder.Services.AddScoped<MigrationService>(provider =>
+    new MigrationService(
+        provider.GetRequiredService<AppDbContext>(),
+        migrationScriptsPath
+    ));
+
+builder.Services..AddScoped<ITransactionService, TransactionService>();
+
+// Continue setting up the application...
+var app = builder.Build();
+
+
+// Apply migrations
+using (var scope = app.Services.CreateScope())
+{
+    var migrationService = scope.ServiceProvider.GetRequiredService<MigrationService>();
+    try
+    {
+        await migrationService.ApplyMigrations();
+    }
+    catch (Exception ex)
+    {
+        // Log the exception, perform any necessary cleanup, and stop application startup
+        var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred while applying migrations. Application will be stopped.");
+
+        // Fail fast by exiting the application
+        Environment.Exit(1);
+    }
+}
+
+// Further app configuration...
+
+app.Run();
+
+```
+```
+public class TransactionService : ITransactionService
+{
+    private readonly AppDbContext _context;
+
+    public TransactionService(AppDbContext context)
+    {
+        _context = context;
+    }
+
+    public async Task<ITransaction> BeginTransactionAsync()
+    {
+        var transaction = await _context.Database.BeginTransactionAsync();
+        return new EfCoreTransaction(transaction);
+    }
+}
+```
