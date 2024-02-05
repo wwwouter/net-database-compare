@@ -21,3 +21,9 @@ modelBuilder.Entity<Employee>()
 ```
 
 
+
+
+I'm writing a repository with EF Core to compare different dataaccess packages. Keep DTO nullable values nullable. If not clear, just assume a query, based on the description. MS SQL Server is the database.
+I want to showcase working with transactions. Implement the following methods in the repository: RunTwoUpdatesInSingleTransaction, Operation1InATransaction and Operation2InATransaction.
+
+I 

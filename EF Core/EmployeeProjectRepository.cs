@@ -307,6 +307,36 @@ SELECT * FROM EmployeeCTE";
         await _context.SaveChangesAsync();
     }
 
+    public async Task RunTwoUpdatesInSingleTransaction(SingleOperationTransactionDto data)
+    {
+        var transaction = _context.Database.BeginTransaction();
+        try
+        {
+            var employee1 = await _context.Employees.FindAsync(data.Id1);
+            if (employee1 != null)
+            {
+                employee1.Name = data.Name1;
+            }
+
+            var employee2 = await _context.Employees.FindAsync(data.Id2);
+            if (employee2 != null)
+            {
+                employee2.Name = data.Name2;
+            }
+
+            await _context.SaveChangesAsync();
+            await transaction.CommitAsync();
+        }
+        catch
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
+        finally
+        {
+            await transaction.DisposeAsync();
+        }
+    }
 
 
 }

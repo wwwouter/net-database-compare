@@ -51,7 +51,7 @@ public interface IEmployeeProjectRepository
     Task AddEmployeeWithPartialData(EmployeePartialAddDto employeePartial);
 
     // Executes two different updates in a single transaction.
-    Task RunTwoUpdatesInSingleTransaction(SingleOperationTransactionDto operation);
+    Task RunTwoUpdatesInSingleTransaction(SingleOperationTransactionDto data);
 
     // Executes a single operation within a transaction.
     Task Operation1InATransaction(Guid id, string name, ITransaction transaction);
