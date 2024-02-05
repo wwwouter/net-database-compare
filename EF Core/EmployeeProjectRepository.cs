@@ -35,8 +35,9 @@ public class EmployeeProjectRepository : IEmployeeProjectRepository
             AddressLine1 = employeeDto.AddressLine1,
             AddressLine2 = employeeDto.AddressLine2,
             City = employeeDto.City,
-            CreatedOn = DateTime.UtcNow,
-            UpdatedOn = null
+            CreatedOn = employeeDto.CreatedOn,
+            UpdatedOn = employeeDto.UpdatedOn,
+            IsActive = true // Needs to be set explicitly if it's not nullable and has a default value
         };
 
         await _context.Employees.AddAsync(employee);
