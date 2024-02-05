@@ -510,5 +510,22 @@ SELECT * FROM EmployeeCTE";
         return result;
     }
 
+    public async Task<List<EmployeeSelfJoinDto>> GetEmployeeManagers()
+    {
+        // Performing a self-join on the Employees table to link each employee with their manager
+        var query = from employee in _context.Employees
+                    join manager in _context.Employees on employee.EmployeeHierarchy.ManagerId equals manager.Id into managerGroup
+                    from m in managerGroup.DefaultIfEmpty() // This ensures that employees without managers are included in the results
+                    select new EmployeeSelfJoinDto
+                    {
+                        EmployeeID = employee.Id,
+                        ManagerID = m != null ? m.Id : (Guid?)null, // If there's no manager, ManagerID will be null
+                        EmployeeName = employee.Name,
+                        ManagerName = m != null ? m.Name : null // If there's no manager, ManagerName will be null
+                    };
+
+        return await query.ToListAsync();
+    }
+
 
 }
