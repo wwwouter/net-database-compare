@@ -28,6 +28,15 @@ public class EmployeeProjectRepository : IEmployeeProjectRepository
         }
     }
 
+    private async Task<List<T>> QueryAsync<T>(string sql, object param = null)
+    {
+        using (var connection = CreateConnection())
+        {
+            var results = await connection.QueryAsync<T>(sql, param);
+            return results.ToList();
+        }
+    }
+
     public async Task AddEmployee(EmployeeAddDto employee)
     {
         var sql = @"
@@ -35,7 +44,7 @@ INSERT INTO Employees (Id, Name, Age, Department, HireDate, Salary, AddressLine1
 VALUES (@EmployeeID, @Name, @Age, @Department, @HireDate, @Salary, @AddressLine1, @AddressLine2, @City, @CreatedOn, @UpdatedOn)";
 
 
-        await this.ExecuteAsync(sql, new
+        await ExecuteAsync(sql, new
         {
             employee.EmployeeID,
             employee.Name,
@@ -58,7 +67,7 @@ UPDATE Employees
 SET Name = @Name 
 WHERE Id = @EmployeeID";
 
-        await this.ExecuteAsync(sql, new
+        await ExecuteAsync(sql, new
         {
             employeeUpdate.EmployeeID,
             employeeUpdate.Name
@@ -71,13 +80,21 @@ WHERE Id = @EmployeeID";
 DELETE FROM Employees 
 WHERE Id = @EmployeeID";
 
-        await this.ExecuteAsync(sql, new
+        await ExecuteAsync(sql, new
         {
             employeeDelete.EmployeeID
         });
     }
 
 
+    public async Task<List<GetEmployeesByCityDto>> GetEmployeesByCity(EmployeeCityQueryDto cityQuery)
+    {
+        var sql = @"
+SELECT Id as EmployeeID, Name, City 
+FROM Employees 
+WHERE City = @City";
 
+        return await QueryAsync<GetEmployeesByCityDto>(sql, new { cityQuery.City });
+    }
 
 }
