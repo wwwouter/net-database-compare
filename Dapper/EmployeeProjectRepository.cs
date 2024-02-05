@@ -133,5 +133,17 @@ WHERE CONTAINS((Name, Department, City), @SearchTerm)";
         return await QueryAsync<EmployeeDto>(sql, new { SearchTerm = formattedSearchTerm });
     }
 
+    public async Task<List<EmployeeProjectOuterJoinDto>> GetEmployeeProjectsWithOuterJoin()
+    {
+        var sql = @"
+SELECT e.Id as EmployeeID, p.Id as ProjectID
+FROM Employees e
+LEFT OUTER JOIN EmployeeProjects ep ON e.Id = ep.EmployeeId
+LEFT OUTER JOIN Projects p ON ep.ProjectId = p.Id";
+
+        return await QueryAsync<EmployeeProjectOuterJoinDto>(sql);
+    }
+
+
 
 }
