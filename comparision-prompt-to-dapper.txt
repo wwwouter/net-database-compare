@@ -1212,3 +1212,12 @@ CREATE TABLE MigrationLock (
 ```
 I want to compare different data access packages. I implemented a demo app with EF Core. Please implement IEmployeeProjectRepository with Dapper. MS SQL Server is the database. Only output the new code. Implement as much as possible. Don't add comments like " // Implement interface methods here..."
 Start with AddEmployeeWithPartialData
+
+
+
+What would happen if you don't provide it in the INSERT query? (Remember the SQL CREATE TABLE IsActive bit NOT NULL DEFAULT 1)
+
+
+7%
+70%
+66%

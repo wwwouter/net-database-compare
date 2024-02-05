@@ -14,11 +14,10 @@ public class MigrationService
         _context = context;
         _migrationScriptsPath = migrationScriptsPath;
     }
-
     public async Task ApplyMigrations()
     {
         var instanceId = Guid.NewGuid().ToString(); // Unique identifier for this instance
-        var migrationFiles = Directory.GetFiles("Path\\To\\Your\\Scripts\\Folder", "*.sql").OrderBy(f => f);
+        var migrationFiles = Directory.GetFiles(_migrationScriptsPath, "*.sql").OrderBy(f => f);
         var migrationFileNames = migrationFiles.Select(Path.GetFileName).ToHashSet();
 
         // Retrieve all migrations that have been applied from the database
@@ -37,25 +36,49 @@ public class MigrationService
             var alreadyApplied = appliedMigrations.Contains(scriptName);
             if (!alreadyApplied)
             {
-                // Acquire a lock as previously described to ensure only one instance applies this migration
                 if (await TryAcquireLockAsync(instanceId))
                 {
-                    var script = await File.ReadAllTextAsync(file);
-                    await _context.Database.ExecuteSqlRawAsync(script);
-                    await _context.AppliedMigrations.AddAsync(new AppliedMigration
+                    try
                     {
-                        ScriptName = scriptName,
-                        AppliedBy = instanceId,
-                        AppliedAt = DateTime.UtcNow
-                    });
-                    await _context.SaveChangesAsync();
+                        // Start a transaction for each script execution
+                        using (var transaction = await _context.Database.BeginTransactionAsync())
+                        {
+                            var script = await File.ReadAllTextAsync(file);
+                            await _context.Database.ExecuteSqlRawAsync(script);
 
-                    // Release the lock
-                    await ReleaseLockAsync();
+                            // Log the migration as applied
+                            await _context.AppliedMigrations.AddAsync(new AppliedMigration
+                            {
+                                ScriptName = scriptName,
+                                AppliedBy = instanceId,
+                                AppliedAt = DateTime.UtcNow
+                            });
+                            await _context.SaveChangesAsync();
+
+                            // Commit the transaction if script executes successfully
+                            await transaction.CommitAsync();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        // Rollback is handled automatically by the using statement if an exception occurs
+
+                        // Release the lock in case of failure
+                        await ReleaseLockAsync();
+
+                        // Rethrow the exception to stop the application
+                        throw new Exception($"Failed to apply migration script {scriptName}: {ex.Message}", ex);
+                    }
+                    finally
+                    {
+                        // Ensure the lock is released after attempting to apply the migration
+                        await ReleaseLockAsync();
+                    }
                 }
             }
         }
     }
+
 
     public async Task<bool> TryAcquireLockAsync(string instanceId)
     {
