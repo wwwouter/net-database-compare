@@ -162,7 +162,18 @@ public record PagingAndSortingQueryDto(int PageNumber, int PageSize, string Sort
 
 public record EmployeeSelfJoinDto(Guid EmployeeID, Guid? ManagerID);
 
-public record ProjectSummaryDto(Guid ProjectID, string Name, decimal TotalBudget);
+public record ProjectSummaryDto(
+    Guid ProjectID,
+    string Name,
+    decimal TotalBudget,
+    byte Status,
+    DateTime StartDate,
+    DateTime EndDate,
+    float Progress,
+    byte Priority,
+    string EmployeeAssignedName,
+    int NumberOfCustomers);
+
 
 public record StoredProcedureQueryDto(string ProcedureName, Dictionary<string, object?> Parameters);
 
