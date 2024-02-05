@@ -527,5 +527,14 @@ SELECT * FROM EmployeeCTE";
         return await query.ToListAsync();
     }
 
+    public async Task<decimal> GetTotalBudgetForProjects()
+    {
+        // Calculate the total budget by summing the Budget column of all projects
+        var totalBudget = await _context.Projects.SumAsync(p => p.Budget);
+
+        return totalBudget;
+    }
+
+
 
 }
