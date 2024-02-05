@@ -180,6 +180,20 @@ WHERE Id = @EntityId";
         });
     }
 
+    public async Task AppendNumberToJsonData(AppendNumberToJsonDataDto appendNumberDto)
+    {
+        var sql = @"
+UPDATE YourTableName
+SET JSONData = JSON_MODIFY(JSONData, 'append $.FavoriteNumbers', @NumberToAppend)
+WHERE Id = @EntityId";
+
+        await ExecuteAsync(sql, new
+        {
+            EntityId = appendNumberDto.EntityId,
+            NumberToAppend = appendNumberDto.NumberToAppend
+        });
+    }
+
 
 
 }
