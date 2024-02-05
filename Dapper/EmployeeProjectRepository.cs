@@ -45,6 +45,25 @@ VALUES (@EmployeeID, @Name, @Age, @Department, @HireDate, @Salary, @AddressLine1
         }
     }
 
+    public async Task UpdateEmployeeName(EmployeeUpdateNameDto employeeUpdate)
+    {
+        var sql = @"
+UPDATE Employees 
+SET Name = @Name 
+WHERE Id = @EmployeeID";
+
+        using (var connection = CreateConnection()) // Utilizing the existing CreateConnection method
+        {
+            await connection.OpenAsync();
+            await connection.ExecuteAsync(sql, new
+            {
+                employeeUpdate.EmployeeID,
+                employeeUpdate.Name
+            });
+        }
+    }
+
+
 
 
 }
