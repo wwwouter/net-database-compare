@@ -194,6 +194,22 @@ WHERE Id = @EntityId";
         });
     }
 
+    public async Task<List<CustomerBasedOnJsonPropertyDto>> SelectCustomersWithFavoriteNumber(int favoriteNumber)
+    {
+        var sql = @"
+SELECT c.Id as CustomerID, c.Name, c.Age, c.Email, c.PhoneNumber, c.AddressLine1, c.AddressLine2, c.City, c.Country, c.GeographicLocation, c.LoyaltyPoints, c.LastPurchaseDate, c.Notes, c.JSONData
+FROM Customers c
+CROSS APPLY OPENJSON(c.JSONData, '$.FavoriteNumbers')
+    WITH (Number int '$') AS favNumbers
+WHERE favNumbers.Number = @FavoriteNumber";
+
+        using (var connection = CreateConnection())
+        {
+            var results = await connection.QueryAsync<CustomerBasedOnJsonPropertyDto>(sql, new { FavoriteNumber = favoriteNumber });
+            return results.ToList();
+        }
+    }
+
 
 
 }

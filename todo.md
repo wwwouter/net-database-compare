@@ -1,6 +1,10 @@
 
 
 - select with complex type
+    - ef core
+    - dapper
+- Implement Task<List<CustomerBasedOnJsonPropertyDto>> SelectCustomersWithFavoriteNumber(int favoriteNumber); in ef core
+
 
 I'm writing a repository with EF Core to compare different data access packages. Write next missing method. Keep DTO nullable values nullable. If not clear, just assume a query, based on the description. MS SQL Server is the database.
 

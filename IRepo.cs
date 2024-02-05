@@ -38,11 +38,11 @@ public interface IEmployeeProjectRepository
     // Appends a number to the favoriteNumbers array within the JSONData column of a specific entity.
     Task AppendNumberToJsonData(AppendNumberToJsonDataDto appendNumberDto);
 
-    // Example method for selecting entities based on a condition within JSONData
-    Task<List<CustomerBasedOnJsonPropertyDto>> SelectCustomersWithFavoriteNumber(int favoriteNumber);
-
     // Selects based on a property within a JSON column.
     Task<List<CustomerBasedOnJsonPropertyDto>> SelectCustomerBasedOnJsonProperty(JsonPropertyQueryDto jsonPropertyQuery);
+
+    // Example method for selecting entities based on a condition within JSONData
+    Task<List<CustomerBasedOnJsonPropertyDto>> SelectCustomersWithFavoriteNumber(int favoriteNumber);
 
     // Demonstrates the use of Common Table Expressions (CTE).
     Task<List<EmployeeHierarchyDto>> GetEmployeeHierarchy(EmployeeHierarchyQueryDto hierarchyQuery);
