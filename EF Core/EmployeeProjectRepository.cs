@@ -459,5 +459,56 @@ SELECT * FROM EmployeeCTE";
     }
 
 
+    public async Task<PagedResultDto<EmployeeDto>> GetEmployeesPagedAndSorted(PagingAndSortingQueryDto query)
+    {
+        // Base query from Employees table
+        IQueryable<Employee> baseQuery = _context.Employees;
+
+        // Applying sorting
+        switch (query.SortBy.ToLower())
+        {
+            case "name":
+                baseQuery = query.Ascending ? baseQuery.OrderBy(e => e.Name) : baseQuery.OrderByDescending(e => e.Name);
+                break;
+            case "department":
+                baseQuery = query.Ascending ? baseQuery.OrderBy(e => e.Department) : baseQuery.OrderByDescending(e => e.Department);
+                break;
+            case "age":
+                baseQuery = query.Ascending ? baseQuery.OrderBy(e => e.Age) : baseQuery.OrderByDescending(e => e.Age);
+                break;
+            // Default sorting by Name if no valid sort by provided
+            default:
+                baseQuery = baseQuery.OrderBy(e => e.Name);
+                break;
+        }
+
+        // Count total items for pagination metadata before applying pagination
+        int totalCount = await baseQuery.CountAsync();
+
+        // Applying pagination
+        var pagedQuery = baseQuery
+            .Skip((query.PageNumber - 1) * query.PageSize)
+            .Take(query.PageSize);
+
+        // Projecting to DTO
+        var items = await pagedQuery.Select(e => new EmployeeDto
+        {
+            EmployeeID = e.Id,
+            Name = e.Name,
+            Age = e.Age,
+            Department = e.Department,
+            HireDate = e.HireDate,
+            Salary = e.Salary,
+            AddressLine1 = e.AddressLine1,
+            AddressLine2 = e.AddressLine2,
+            City = e.City
+        }).ToListAsync();
+
+        // Constructing the result with pagination metadata
+        var result = new PagedResultDto<EmployeeDto>(items, totalCount);
+
+        return result;
+    }
+
 
 }
