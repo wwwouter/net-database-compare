@@ -537,24 +537,8 @@ SELECT * FROM EmployeeCTE";
 
     public async Task<List<ProjectSummaryDto>> GetProjectSummaries()
     {
-        using (var context = new YourDbContext())
-        {
-            return await context.ProjectSummaries
-                                .Select(p => new ProjectSummaryDto(
-                                    p.ProjectID,
-                                    p.Name,
-                                    p.TotalBudget,
-                                    p.Status,
-                                    p.StartDate,
-                                    p.EndDate,
-                                    p.Progress,
-                                    p.Priority,
-                                    p.EmployeeAssignedName,
-                                    p.NumberOfCustomers))
-                                .ToListAsync();
-        }
+        return await _context.ProjectSummaries.ToListAsync();
     }
-
 
 
 }
