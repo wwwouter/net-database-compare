@@ -367,6 +367,108 @@ WHERE Id = @EmployeeID";
         }
     }
 
+    public async Task<List<EmployeesWithDynamicQueryDto>> GetEmployeesWithDynamicQuery(DynamicQueryDto query)
+    {
+        var sqlBuilder = new SqlBuilder();
+        var template = sqlBuilder.AddTemplate(@"
+SELECT Id AS EmployeeID, Name
+/**where**/
+/**orderby**/
+FROM Employees
+");
+
+        // Dynamically applying filters
+        if (query.Filters != null)
+        {
+            foreach (var filter in query.Filters)
+            {
+                var columnName = filter.Key;
+                var columnValue = filter.Value;
+                if (columnValue != null)
+                {
+                    // Ensure to handle potential SQL injection by using parameters and not injecting values directly
+                    sqlBuilder.Where($"{columnName} LIKE @Value", new { Value = $"%{columnValue}%" });
+                }
+            }
+        }
+
+        // Applying dynamic sorting
+        if (query.SortOrder != null && query.SortOrder.Count > 0)
+        {
+            foreach (var sort in query.SortOrder)
+            {
+                var direction = sort.Value ? "ASC" : "DESC";
+                sqlBuilder.OrderBy($"{sort.Key} {direction}");
+            }
+        }
+        else
+        {
+            // Default sorting
+            sqlBuilder.OrderBy("Name ASC");
+        }
+
+        using (var connection = CreateConnection())
+        {
+            await connection.OpenAsync();
+            var results = await connection.QueryAsync<EmployeesWithDynamicQueryDto>(template.RawSql, template.Parameters);
+            return results.ToList();
+        }
+    }
+
+    public async Task<List<EmployeesWithDynamicQueryDto>> GetEmployeesWithDynamicQuery(DynamicQueryDto query)
+    {
+        var allowedColumns = new HashSet<string> { "Name", "Department", "Age", "City" }; // Define allowed column names
+
+        // Validate column names in filters
+        foreach (var filter in query.Filters.Keys)
+        {
+            if (!allowedColumns.Contains(filter))
+            {
+                throw new ArgumentException($"Invalid column name in filters: {filter}");
+            }
+        }
+
+        // Validate column names in sort orders
+        foreach (var sort in query.SortOrder.Keys)
+        {
+            if (!allowedColumns.Contains(sort))
+            {
+                throw new ArgumentException($"Invalid column name in sort order: {sort}");
+            }
+        }
+
+        var sqlBuilder = new SqlBuilder();
+        var template = sqlBuilder.AddTemplate(@"
+SELECT Id AS EmployeeID, Name
+/**where**/
+/**orderby**/
+FROM Employees
+");
+
+        // Dynamically applying filters
+        foreach (var filter in query.Filters)
+        {
+            var columnName = filter.Key;
+            var columnValue = filter.Value;
+            sqlBuilder.Where($"{columnName} LIKE @Value", new { Value = $"%{columnValue}%" });
+        }
+
+        // Applying dynamic sorting
+        foreach (var sort in query.SortOrder)
+        {
+            var columnName = sort.Key;
+            var direction = sort.Value ? "ASC" : "DESC";
+            sqlBuilder.OrderBy($"{columnName} {direction}");
+        }
+
+        using (var connection = CreateConnection())
+        {
+            await connection.OpenAsync();
+            var results = await connection.QueryAsync<EmployeesWithDynamicQueryDto>(template.RawSql, template.Parameters);
+            return results.ToList();
+        }
+    }
+
 
 
 }

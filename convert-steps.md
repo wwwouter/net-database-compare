@@ -27,7 +27,7 @@ I'm writing a demo app to compare different data access packages. I already impl
     <!-- - Implement Task Operation1InATransaction(Guid id, string name);, Task Operation2InATransaction(Guid id, string name); and EmployeeService equivalent -->
     <!-- - Implement Task BulkInsertEmployees(IEnumerable<EmployeeBulkInsertDto> employees); -->
     <!-- - Implement Task BulkUpdateEmployees(IEnumerable<EmployeeBulkUpdateDto> employees); -->
-    - Implement Task<List<EmployeesWithDynamicQueryDto>> GetEmployeesWithDynamicQuery(DynamicQueryDto query);
+    <!-- - Implement Task<List<EmployeesWithDynamicQueryDto>> GetEmployeesWithDynamicQuery(DynamicQueryDto query); -->
     - Implement Task<PagedResultDto<EmployeeDto>> GetEmployeesPagedAndSorted(PagingAndSortingQueryDto query);
     - Implement Task<List<EmployeeSelfJoinDto>> GetEmployeeManagers();
     - Implement Task<decimal> GetTotalBudgetForProjects();
