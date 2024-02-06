@@ -32,8 +32,8 @@ I'm writing a demo app to compare different data access packages. I already impl
     <!-- - Implement Task<List<EmployeeSelfJoinDto>> GetEmployeeManagers(); -->
     <!-- - Implement Task<decimal> GetTotalBudgetForProjects(); -->
     <!-- - Implement Task<List<ProjectSummaryDto>> GetProjectSummaries(); -->
-    - Implement Task<List<EmployeeDto>> CallStoredProcedure(StoredProcedureQueryDto query);
-    - Implement Task<List<CustomerSpatialQueryDto>> GetCustomersNearLocation(SpatialQueryDto query);
+    <!-- - Implement Task<List<EmployeeDto>> CallStoredProcedure(StoredProcedureQueryDto query); -->
+    <!-- - Implement Task<List<CustomerSpatialQueryDto>> GetCustomersNearLocation(SpatialQueryDto query); -->
 - Create MigrationService.
 - Create AppDbContext equivalent.
 - Create Program.cs.

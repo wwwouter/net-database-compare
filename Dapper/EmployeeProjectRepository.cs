@@ -581,5 +581,38 @@ FROM ProjectSummaries;";
         }
     }
 
+    public async Task<List<CustomerSpatialQueryDto>> GetCustomersNearLocation(SpatialQueryDto query)
+    {
+        // Define the SQL query to select customers near the specified location
+        var sql = @"
+DECLARE @queryPoint geography = geography::Point(@Latitude, @Longitude, 4326);
+SELECT 
+    Id as CustomerID, 
+    Name, 
+    Email, 
+    PhoneNumber, 
+    AddressLine1, 
+    AddressLine2, 
+    City, 
+    Country, 
+    GeographicLocation.ToString() as GeographicLocation, 
+    LoyaltyPoints, 
+    LastPurchaseDate, 
+    Notes 
+FROM 
+    Customers 
+WHERE 
+    GeographicLocation.STDistance(@queryPoint) <= @Distance";
+
+        return await connection.QueryAsync<CustomerSpatialQueryDto>(sql, new
+        {
+            query.Latitude,
+            query.Longitude,
+            query.Distance
+        });
+
+
+    }
+
 
 }
