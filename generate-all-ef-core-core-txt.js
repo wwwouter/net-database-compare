@@ -4,7 +4,7 @@
 const fs = require("fs");
 const path = require("path");
 
-const destination = "linq2db";
+const destination = "NHibernate";
 
 const sourceDir = path.join(__dirname, "EF Core");
 const destDir = path.join(__dirname, destination);
@@ -30,7 +30,7 @@ try {
     output += `${file}: \`\`\`${contents}\`\`\`\n\n`;
   });
 
-  output += `\nI'm writing a demo app to compare different data access packages. I already implemented EF Core and now I want to create similar code with ${destination}. MS SQL Server is the database.\n`;
+  output += `\nI'm writing a demo app to compare different data access packages. I already implemented EF Core and now I want to create similar code with ${destination}. Use LINQ for queries. MS SQL Server is the database.\n`;
 
   fs.writeFileSync(outputFile, output);
   console.log("Done");
