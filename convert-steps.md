@@ -31,7 +31,7 @@ I'm writing a demo app to compare different data access packages. I already impl
     <!-- - Implement Task<PagedResultDto<EmployeeDto>> GetEmployeesPagedAndSorted(PagingAndSortingQueryDto query); -->
     <!-- - Implement Task<List<EmployeeSelfJoinDto>> GetEmployeeManagers(); -->
     <!-- - Implement Task<decimal> GetTotalBudgetForProjects(); -->
-    - Implement Task<List<ProjectSummaryDto>> GetProjectSummaries();
+    <!-- - Implement Task<List<ProjectSummaryDto>> GetProjectSummaries(); -->
     - Implement Task<List<EmployeeDto>> CallStoredProcedure(StoredProcedureQueryDto query);
     - Implement Task<List<CustomerSpatialQueryDto>> GetCustomersNearLocation(SpatialQueryDto query);
 - Create MigrationService.

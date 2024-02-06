@@ -560,6 +560,26 @@ FROM ProjectSummaries;";
         return await connection.QueryAsync<ProjectSummaryDto>(sql);
     }
 
+    public async Task<List<EmployeeDto>> CallStoredProcedure(StoredProcedureQueryDto query)
+    {
+        // Define the stored procedure name
+        var procedureName = "GetEmployeesByDepartment";
+
+        // Create a new connection
+        using (var connection = CreateConnection())
+        {
+            await connection.OpenAsync();
+
+            // Define the parameters for the stored procedure
+            var parameters = new DynamicParameters();
+            parameters.Add("@Department", query.Department, DbType.String, ParameterDirection.Input);
+
+            // Execute the stored procedure and map the results to a list of EmployeeDto
+            var employees = await connection.QueryAsync<EmployeeDto>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+
+            return employees.ToList();
+        }
+    }
 
 
 }
