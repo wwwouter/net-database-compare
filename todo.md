@@ -11,6 +11,7 @@
         - int Insert<T>(T obj);
         - int Insert<T>(Enumerable<T> list);
         - bool Update<T>(T obj);
+            - with updatedOn
         - bool Update<T>(Enumerable<T> list);
         - bool Delete<T>(T obj);
         - bool Delete<T>(Enumerable<T> list);

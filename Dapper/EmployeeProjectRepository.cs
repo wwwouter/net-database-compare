@@ -506,4 +506,20 @@ SELECT COUNT(*) FROM Employees;";
         }
     }
 
+    public async Task<List<EmployeeSelfJoinDto>> GetEmployeeManagers()
+    {
+        // SQL query that performs a self-join on the Employees table
+        // to find the manager for each employee
+        var sql = @"
+SELECT e.Id AS EmployeeID, 
+       m.Id AS ManagerID, 
+       e.Name AS EmployeeName, 
+       m.Name AS ManagerName
+FROM Employees e
+LEFT JOIN Employees m ON e.ManagerId = m.Id";
+
+        return await connection.QueryAsync<EmployeeSelfJoinDto>(sql);
+
+    }
+
 }
