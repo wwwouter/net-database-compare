@@ -522,4 +522,24 @@ LEFT JOIN Employees m ON e.ManagerId = m.Id";
 
     }
 
+    public async Task<decimal> GetTotalBudgetForProjects()
+    {
+        // SQL query to calculate the total budget by summing the Budget column of all projects
+        var sql = @"
+SELECT SUM(Budget) 
+FROM Projects";
+
+        using (var connection = CreateConnection())
+        {
+            await connection.OpenAsync();
+
+            // Execute the query using Dapper. Use QuerySingleOrDefaultAsync to expect a single return value or default if none
+            var totalBudget = await connection.QuerySingleOrDefaultAsync<decimal?>(sql);
+
+            // Return 0 if the result is null (e.g., no projects in the table), otherwise return the total budget
+            return totalBudget ?? 0;
+        }
+    }
+
+
 }
