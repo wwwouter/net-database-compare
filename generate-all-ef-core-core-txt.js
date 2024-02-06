@@ -18,10 +18,10 @@ try {
     output += `${file}: \`\`\`${contents}\`\`\`\n\n`;
   });
 
-  fs.readdirSync(destDir).forEach((file) => {
-    const contents = fs.readFileSync(path.join(destDir, file), "utf8");
-    output += `${file}: \`\`\`${contents}\`\`\`\n\n`;
-  });
+  // fs.readdirSync(destDir).forEach((file) => {
+  //   const contents = fs.readFileSync(path.join(destDir, file), "utf8");
+  //   output += `${file}: \`\`\`${contents}\`\`\`\n\n`;
+  // });
 
   const otherFiles = ["IRepo.cs", "schema.sql"];
 
