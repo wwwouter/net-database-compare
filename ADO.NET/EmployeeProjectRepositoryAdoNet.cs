@@ -133,5 +133,30 @@ WHERE Id = @Id";
     }
 
 
+    public async Task<List<GetEmployeesByCityDto>> GetEmployeesByCity(EmployeeCityQueryDto cityQuery)
+    {
+        // SQL SELECT statement to retrieve employees by city
+        var commandText = @"
+SELECT Id AS EmployeeID, Name, City
+FROM Employees
+WHERE City = @City";
+
+        // Create parameters for the SQL command
+        var parameters = new SqlParameter[]
+        {
+        new SqlParameter("@City", SqlDbType.NVarChar) { Value = cityQuery.City }
+        };
+
+        // Execute the query and convert the result set to a list of GetEmployeesByCityDto objects
+        var employeesByCity = await ExecuteQueryAsync(commandText, CommandType.Text, reader => new GetEmployeesByCityDto
+        {
+            EmployeeID = reader.GetGuid(reader.GetOrdinal("EmployeeID")),
+            Name = reader.GetString(reader.GetOrdinal("Name")),
+            City = reader.GetString(reader.GetOrdinal("City"))
+        }, parameters);
+
+        return employeesByCity;
+    }
+
 
 }
