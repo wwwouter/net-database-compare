@@ -4,7 +4,7 @@
 const fs = require("fs");
 const path = require("path");
 
-const destination = "ADO.NET";
+const destination = "linq2db";
 
 const sourceDir = path.join(__dirname, "EF Core");
 const destDir = path.join(__dirname, destination);
