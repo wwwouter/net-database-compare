@@ -270,5 +270,42 @@ VALUES (@EmployeeID, @Name, @Age, 'Not Specified', @HireDate, SYSDATETIME(), SYS
     }
 
 
+    public async Task RunTwoUpdatesInSingleTransaction(SingleOperationTransactionDto data)
+    {
+        var updateSql = @"
+UPDATE Employees 
+SET Name = @Name 
+WHERE Id = @EmployeeID";
+
+        using (var connection = CreateConnection())
+        {
+            await connection.OpenAsync();
+            using (var transaction = connection.BeginTransaction())
+            {
+                // First update operation
+                await connection.ExecuteAsync(updateSql, new { EmployeeID = data.id1, Name = data.name1 }, transaction: transaction);
+
+                // Second update operation
+                await connection.ExecuteAsync(updateSql, new { EmployeeID = data.id2, Name = data.name2 }, transaction: transaction);
+
+                // Commit transaction
+                transaction.Commit();
+            }
+        }
+    }
+
+    public async Task Operation1InATransaction(Guid id, string name)
+    {
+        var sql = "UPDATE Employees SET Name = @Name WHERE Id = @Id";
+        await ExecuteAsync(sql, new { Id = id, Name = name });
+    }
+
+    public async Task Operation2InATransaction(Guid id, string name)
+    {
+        var sql = "UPDATE Employees SET Name = @Name WHERE Id = @Id";
+        await ExecuteAsync(sql, new { Id = id, Name = name });
+    }
+
+
 
 }
