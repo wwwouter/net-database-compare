@@ -158,5 +158,74 @@ WHERE City = @City";
         return employeesByCity;
     }
 
+    public async Task<List<ProjectDto>> GetProjectsByEmployeeId(EmployeeProjectsQueryDto employeeProjectsQuery)
+    {
+        // SQL SELECT statement to retrieve projects by employee ID
+        var commandText = @"
+SELECT Id AS ProjectID, Name, StartDate, EndDate, Budget, Status, LogoSvg, Notes, Progress, Priority, EmployeeAssigned
+FROM Projects
+WHERE EmployeeAssigned = @EmployeeID";
+
+        // Create parameters for the SQL command
+        var parameters = new SqlParameter[]
+        {
+        new SqlParameter("@EmployeeID", SqlDbType.UniqueIdentifier) { Value = employeeProjectsQuery.EmployeeID }
+        };
+
+        // Execute the query and convert the result set to a list of ProjectDto objects
+        var projects = await ExecuteQueryAsync(commandText, CommandType.Text, reader => new ProjectDto
+        {
+            ProjectID = reader.GetGuid(reader.GetOrdinal("ProjectID")),
+            Name = reader.GetString(reader.GetOrdinal("Name")),
+            StartDate = reader.GetDateTime(reader.GetOrdinal("StartDate")),
+            EndDate = reader.GetDateTime(reader.GetOrdinal("EndDate")),
+            Budget = reader.GetDecimal(reader.GetOrdinal("Budget")),
+            Status = reader.GetByte(reader.GetOrdinal("Status")),
+            LogoSvg = (byte[])reader.GetValue(reader.GetOrdinal("LogoSvg")),
+            Notes = reader.IsDBNull(reader.GetOrdinal("Notes")) ? null : reader.GetString(reader.GetOrdinal("Notes")),
+            Progress = reader.GetFloat(reader.GetOrdinal("Progress")),
+            Priority = reader.GetByte(reader.GetOrdinal("Priority")),
+            EmployeeAssigned = reader.IsDBNull(reader.GetOrdinal("EmployeeAssigned")) ? null : reader.GetGuid(reader.GetOrdinal("EmployeeAssigned"))
+        }, parameters);
+
+        return projects;
+    }
+
+
+    public async Task<List<ProjectDto>> GetProjectsByCustomerId(CustomerProjectsQueryDto customerProjectsQuery)
+    {
+        // SQL SELECT statement to retrieve projects by customer ID through the ProjectCustomers junction table
+        var commandText = @"
+SELECT p.Id AS ProjectID, p.Name, p.StartDate, p.EndDate, p.Budget, p.Status, p.LogoSvg, p.Notes, p.Progress, p.Priority, p.EmployeeAssigned
+FROM Projects p
+INNER JOIN ProjectCustomers pc ON p.Id = pc.ProjectId
+WHERE pc.CustomerId = @CustomerID";
+
+        // Create parameters for the SQL command
+        var parameters = new SqlParameter[]
+        {
+        new SqlParameter("@CustomerID", SqlDbType.UniqueIdentifier) { Value = customerProjectsQuery.CustomerID }
+        };
+
+        // Execute the query and convert the result set to a list of ProjectDto objects
+        var projects = await ExecuteQueryAsync(commandText, CommandType.Text, reader => new ProjectDto
+        {
+            ProjectID = reader.GetGuid(reader.GetOrdinal("ProjectID")),
+            Name = reader.GetString(reader.GetOrdinal("Name")),
+            StartDate = reader.GetDateTime(reader.GetOrdinal("StartDate")),
+            EndDate = reader.GetDateTime(reader.GetOrdinal("EndDate")),
+            Budget = reader.GetDecimal(reader.GetOrdinal("Budget")),
+            Status = Convert.ToByte(reader["Status"]), // Assuming Status is stored as an int in DB but represented as a byte in ProjectDto
+            LogoSvg = reader["LogoSvg"] as byte[], // Handling potential DBNull values
+            Notes = reader.IsDBNull(reader.GetOrdinal("Notes")) ? null : reader.GetString(reader.GetOrdinal("Notes")),
+            Progress = reader.GetFloat(reader.GetOrdinal("Progress")),
+            Priority = Convert.ToByte(reader["Priority"]), // Assuming Priority is stored as an int in DB but represented as a byte in ProjectDto
+            EmployeeAssigned = reader.IsDBNull(reader.GetOrdinal("EmployeeAssigned")) ? null : reader.GetGuid(reader.GetOrdinal("EmployeeAssigned"))
+        }, parameters);
+
+        return projects;
+    }
+
+
 
 }

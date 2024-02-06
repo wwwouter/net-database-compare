@@ -5,7 +5,7 @@
 
 <!-- - EF Core     -->
 <!-- - Dapper      -->
-- ADO.NET    
+<!-- - ADO.NET: skipped after a few methods     -->
 - linq2db    
 - NHibernate 
 - PetaPoco   
