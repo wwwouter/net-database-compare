@@ -79,9 +79,9 @@ public class EmployeeProjectRepositoryAdoNet : IEmployeeProjectRepository
         // SQL INSERT statement
         var commandText = @"
 INSERT INTO Employees
-(Name, Age, Department, HireDate, Salary, AddressLine1, AddressLine2, City, IsActive)
+(Name, Age, Department, HireDate, Salary, AddressLine1, AddressLine2, City)
 VALUES
-(@Name, @Age, @Department, @HireDate, @Salary, @AddressLine1, @AddressLine2, @City, @IsActive)";
+(@Name, @Age, @Department, @HireDate, @Salary, @AddressLine1, @AddressLine2, @City)";
 
         // Create parameters
         var parameters = new SqlParameter[]
@@ -94,10 +94,28 @@ VALUES
         new SqlParameter("@AddressLine1", SqlDbType.NVarChar) { Value = (object)employeeDto.AddressLine1 ?? DBNull.Value },
         new SqlParameter("@AddressLine2", SqlDbType.NVarChar) { Value = (object)employeeDto.AddressLine2 ?? DBNull.Value },
         new SqlParameter("@City", SqlDbType.NVarChar) { Value = employeeDto.City },
-        new SqlParameter("@IsActive", SqlDbType.Bit) { Value = employeeDto.IsActive }
         };
 
         // Execute the INSERT command
+        await ExecuteNonQueryAsync(commandText, CommandType.Text, parameters);
+    }
+
+    public async Task UpdateEmployeeName(EmployeeUpdateNameDto employeeUpdate)
+    {
+        // SQL UPDATE statement to update employee name and the UpdatedOn timestamp
+        var commandText = @"
+UPDATE Employees
+SET Name = @Name, UpdatedOn = SYSDATETIME()
+WHERE Id = @Id";
+
+        // Create parameters for the SQL command
+        var parameters = new SqlParameter[]
+        {
+        new SqlParameter("@Id", SqlDbType.UniqueIdentifier) { Value = employeeUpdate.EmployeeID },
+        new SqlParameter("@Name", SqlDbType.NVarChar) { Value = employeeUpdate.Name }
+        };
+
+        // Execute the UPDATE command using the helper method
         await ExecuteNonQueryAsync(commandText, CommandType.Text, parameters);
     }
 

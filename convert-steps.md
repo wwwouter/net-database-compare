@@ -8,7 +8,7 @@ I'm writing a demo app to compare different data access packages. I already impl
 <!-- - Create empty EmployeeProjectRepository -->
 - Fill EmployeeProjectRepository one method at a time.
     <!-- - Implement Task AddEmployee(EmployeeAddDto employee); using helper methods. -->
-    - Implement Task UpdateEmployeeName(EmployeeUpdateNameDto employeeUpdate);  using helper methods. Make sure UpdatedOn is set correctly.
+    <!-- - Implement Task UpdateEmployeeName(EmployeeUpdateNameDto employeeUpdate);  using helper methods. Make sure UpdatedOn is set correctly. -->
     <!-- - Implement Task DeleteEmployeeById(EmployeeDeleteDto employeeDelete); -->
     <!-- - Create some helper methods in EmployeeProjectRepository to make executing queries easier. -->
     - Implement Task<List<GetEmployeesByCityDto>> GetEmployeesByCity(EmployeeCityQueryDto cityQuery);  using helper methods if possible.

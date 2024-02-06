@@ -1349,6 +1349,34 @@ public class EmployeeProjectRepositoryAdoNet : IEmployeeProjectRepository
         return results;
     }
 
+    public async Task AddEmployee(EmployeeAddDto employeeDto)
+    {
+        // SQL INSERT statement
+        var commandText = @"
+INSERT INTO Employees
+(Name, Age, Department, HireDate, Salary, AddressLine1, AddressLine2, City, IsActive)
+VALUES
+(@Name, @Age, @Department, @HireDate, @Salary, @AddressLine1, @AddressLine2, @City, @IsActive)";
+
+        // Create parameters
+        var parameters = new SqlParameter[]
+        {
+        new SqlParameter("@Name", SqlDbType.NVarChar) { Value = employeeDto.Name },
+        new SqlParameter("@Age", SqlDbType.Int) { Value = (object)employeeDto.Age ?? DBNull.Value },
+        new SqlParameter("@Department", SqlDbType.NVarChar) { Value = employeeDto.Department },
+        new SqlParameter("@HireDate", SqlDbType.DateTime2) { Value = employeeDto.HireDate },
+        new SqlParameter("@Salary", SqlDbType.Decimal) { Value = (object)employeeDto.Salary ?? DBNull.Value },
+        new SqlParameter("@AddressLine1", SqlDbType.NVarChar) { Value = (object)employeeDto.AddressLine1 ?? DBNull.Value },
+        new SqlParameter("@AddressLine2", SqlDbType.NVarChar) { Value = (object)employeeDto.AddressLine2 ?? DBNull.Value },
+        new SqlParameter("@City", SqlDbType.NVarChar) { Value = employeeDto.City },
+        new SqlParameter("@IsActive", SqlDbType.Bit) { Value = employeeDto.IsActive }
+        };
+
+        // Execute the INSERT command
+        await ExecuteNonQueryAsync(commandText, CommandType.Text, parameters);
+    }
+
+
 
     public async Task DeleteEmployeeById(Guid employeeId)
     {
