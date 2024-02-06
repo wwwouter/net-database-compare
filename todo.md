@@ -4,7 +4,19 @@
     - ef core
     - dapper
 - Implement Task<List<CustomerBasedOnJsonPropertyDto>> SelectCustomersWithFavoriteNumber(int favoriteNumber); in ef core
-
+- dapper
+    - https://github.com/DapperLib/Dapper.Contrib
+        - T Get<T>(id);
+        - IEnumerable<T> GetAll<T>();
+        - int Insert<T>(T obj);
+        - int Insert<T>(Enumerable<T> list);
+        - bool Update<T>(T obj);
+        - bool Update<T>(Enumerable<T> list);
+        - bool Delete<T>(T obj);
+        - bool Delete<T>(Enumerable<T> list);
+        - bool DeleteAll<T>(); 
+        - T Get<T,W>(string table, W where);       
+            - in repo wrap in a method with table set.
 
 I'm writing a repository with EF Core to compare different data access packages. Write next missing method. Keep DTO nullable values nullable. If not clear, just assume a query, based on the description. MS SQL Server is the database.
 

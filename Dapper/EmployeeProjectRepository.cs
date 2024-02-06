@@ -306,6 +306,67 @@ WHERE Id = @EmployeeID";
         await ExecuteAsync(sql, new { Id = id, Name = name });
     }
 
+    public async Task BulkInsertEmployees(IEnumerable<EmployeeBulkInsertDto> employeeDtos)
+    {
+        // or very large datasets, consider using a library like Dapper.Contrib or Dapper Plus, or use the SQL Server specific SqlBulkCopy class for maximum performance.
+        var sql = @"INSERT INTO Employees (Id, Name, Age, Department, HireDate, Salary, AddressLine1, AddressLine2, City) VALUES ";
+
+        var parameters = new List<object>();
+        var valuesList = new List<string>();
+        int count = 0;
+
+        foreach (var employee in employeeDtos)
+        {
+            count++;
+            valuesList.Add($"(@Id{count}, @Name{count}, @Age{count}, @Department{count}, @HireDate{count}, @Salary{count}, @AddressLine1{count}, @AddressLine2{count}, @City{count})");
+
+            parameters.Add(new
+            {
+                Id = employee.EmployeeID,
+                Name = employee.Name,
+                Age = employee.Age,
+                Department = employee.Department,
+                HireDate = employee.HireDate,
+                Salary = employee.Salary,
+                AddressLine1 = employee.AddressLine1,
+                AddressLine2 = employee.AddressLine2,
+                City = employee.City
+            });
+        }
+
+        sql += string.Join(", ", valuesList);
+
+        using (var connection = CreateConnection())
+        {
+            await connection.OpenAsync();
+            await connection.ExecuteAsync(sql, parameters.ToArray());
+        }
+    }
+
+
+    public async Task BulkUpdateEmployees(IEnumerable<EmployeeBulkUpdateDto> employeeDtos)
+    {
+        //  For more substantial performance improvements, especially with very large datasets, 
+        //  consider using a library that supports efficient bulk operations with SQL Server, such as 
+        //  Dapper Plus, or leveraging SqlBulkCopy with a temporary table and then performing 
+        //  a bulk update from the temporary table to the target table.
+        var sql = @"UPDATE Employees SET Name = @Name WHERE Id = @EmployeeID";
+
+        using (var connection = CreateConnection())
+        {
+            await connection.OpenAsync();
+            using (var transaction = connection.BeginTransaction())
+            {
+                foreach (var employee in employeeDtos)
+                {
+                    await connection.ExecuteAsync(sql, new { EmployeeID = employee.EmployeeID, Name = employee.Name }, transaction: transaction);
+                }
+
+                transaction.Commit();
+            }
+        }
+    }
+
 
 
 }
