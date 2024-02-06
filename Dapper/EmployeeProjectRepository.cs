@@ -470,5 +470,40 @@ FROM Employees
     }
 
 
+    public async Task<PagedResultDto<EmployeeDto>> GetEmployeesPagedAndSorted(PagingAndSortingQueryDto query)
+    {
+        var allowedSortColumns = new HashSet<string> { "Name", "Department", "Age", "City" }; // Define allowed sort columns
+
+        // Validate the SortBy column
+        if (!allowedSortColumns.Contains(query.SortBy))
+        {
+            throw new ArgumentException($"Invalid sort column: {query.SortBy}");
+        }
+
+        var sortDirection = query.Ascending ? "ASC" : "DESC";
+
+        // Building the SQL for paging and sorting
+        var sql = $@"
+SELECT Id, Name, Age, Department, HireDate, Salary, AddressLine1, AddressLine2, City
+FROM Employees
+ORDER BY {query.SortBy} {sortDirection}
+OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;
+
+SELECT COUNT(*) FROM Employees;";
+
+        using (var connection = CreateConnection())
+        {
+            await connection.OpenAsync();
+
+            // Using Dapper's QueryMultipleAsync to execute both queries in a single round trip
+            using (var multi = await connection.QueryMultipleAsync(sql, new { Offset = (query.PageNumber - 1) * query.PageSize, PageSize = query.PageSize }))
+            {
+                var employees = (await multi.ReadAsync<EmployeeDto>()).ToList();
+                var totalCount = await multi.ReadFirstAsync<int>();
+
+                return new PagedResultDto<EmployeeDto>(employees, totalCount);
+            }
+        }
+    }
 
 }
