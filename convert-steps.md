@@ -4,8 +4,8 @@ I'm writing a demo app to compare different data access packages. I already impl
 
 
 <!-- - If relevant to have something like EF Core Entities, create them (use Entities.cs a basis), otherwise explain why not. -->
-- Create EfCoreTransaction equivalent and TransactionService, based on ITransaction.
-- Create empty EmployeeProjectRepository
+<!-- - Create EfCoreTransaction equivalent and TransactionService, based on ITransaction. -->
+<!-- - Create empty EmployeeProjectRepository -->
 - Fill EmployeeProjectRepository one method at a time.
     - Implement Task AddEmployee(EmployeeAddDto employee); using helper methods.
     - Implement Task UpdateEmployeeName(EmployeeUpdateNameDto employeeUpdate);  using helper methods. Make sure UpdatedOn is set correctly.
