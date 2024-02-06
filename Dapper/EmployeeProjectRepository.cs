@@ -618,5 +618,29 @@ WHERE
 
     }
 
+    public async Task<ProjectWithEmployee> GetProjectWithAssignedEmployee(Guid projectId)
+    {
+        var sql = @"
+            SELECT p.Id, p.Name, 
+                   e.Id AS EmployeeId, e.Name AS EmployeeName, e.Department
+            FROM Projects p
+            LEFT JOIN Employees e ON p.EmployeeAssigned = e.Id
+            WHERE p.Id = @ProjectId";
+
+        using (var connection = _connectionFactory.CreateConnection())
+        {
+            var projectWithEmployee = await connection.QueryAsync<ProjectWithEmployee, EmployeeInfo, ProjectWithEmployee>(
+                sql,
+                (project, employee) =>
+                {
+                    project.EmployeeAssigned = employee;
+                    return project;
+                },
+                splitOn: "EmployeeId",
+                param: new { ProjectId = projectId });
+
+            return projectWithEmployee.FirstOrDefault();
+        }
+    }
 
 }

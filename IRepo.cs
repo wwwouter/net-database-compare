@@ -50,6 +50,9 @@ public interface IEmployeeProjectRepository
     // Demonstrates handling of partial object creation, specifically with the IsActive flag.
     Task AddEmployeeWithPartialData(EmployeePartialAddDto employeePartial);
 
+    // Returns non-flat data using a custom DTO.
+    Task<ProjectWithEmployee> GetProjectWithAssignedEmployee(Guid projectId)
+
     // Executes two different updates in a single transaction.
     Task RunTwoUpdatesInSingleTransaction(SingleOperationTransactionDto data);
 
@@ -290,3 +293,20 @@ public record CustomerSpatialQueryDto(
     DateTime? LastPurchaseDate,
     string? Notes
 );
+
+
+
+public record EmployeeInfo(
+    string Id,
+    string Name,
+    string Department
+);
+
+
+public record ProjectWithEmployee
+(
+    string Id,
+    string Name,
+    EmployeeInfo EmployeeAssigned
+);
+

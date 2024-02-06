@@ -1,8 +1,5 @@
 
 
-- select with complex type
-    - ef core
-    - dapper
 - Implement Task<List<CustomerBasedOnJsonPropertyDto>> SelectCustomersWithFavoriteNumber(int favoriteNumber); in ef core
 - dapper
     - https://github.com/DapperLib/Dapper.Contrib

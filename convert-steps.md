@@ -23,6 +23,7 @@ I'm writing a demo app to compare different data access packages. I already impl
     <!-- - Implement Task<List<CustomerBasedOnJsonPropertyDto>> SelectCustomersWithFavoriteNumber(int favoriteNumber); -->
     <!-- - Implement Task<List<EmployeeHierarchyDto>> GetEmployeeHierarchy(EmployeeHierarchyQueryDto hierarchyQuery); -->
     <!-- - Implement Task AddEmployeeWithPartialData(EmployeePartialAddDto employeePartial); -->
+    <!-- - Implement Task<ProjectWithEmployee> GetProjectWithAssignedEmployee(Guid projectId); -->
     <!-- - Implement Task RunTwoUpdatesInSingleTransaction(SingleOperationTransactionDto data); -->
     <!-- - Implement Task Operation1InATransaction(Guid id, string name);, Task Operation2InATransaction(Guid id, string name); and EmployeeService equivalent -->
     <!-- - Implement Task BulkInsertEmployees(IEnumerable<EmployeeBulkInsertDto> employees); -->

@@ -595,6 +595,25 @@ SELECT * FROM EmployeeCTE";
         return customers;
     }
 
+    public async Task<ProjectWithEmployeeDto> GetProjectWithAssignedEmployee(Guid projectId)
+    {
+        var projectWithEmployee = await _context.Projects
+            .Where(p => p.Id == projectId)
+            .Select(p => new ProjectWithEmployeeDto
+            {
+                Id = p.Id.ToString(),
+                Name = p.Name,
+                EmployeeAssigned = p.EmployeeAssigned == null ? null : new EmployeeInfoDto
+                {
+                    Id = p.EmployeeAssigned.Id.ToString(),
+                    Name = p.EmployeeAssigned.Name,
+                    Department = p.EmployeeAssigned.Department
+                }
+            })
+            .FirstOrDefaultAsync();
+
+        return projectWithEmployee;
+    }
 
 
 }
