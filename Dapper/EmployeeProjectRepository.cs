@@ -541,5 +541,25 @@ FROM Projects";
         }
     }
 
+    public async Task<List<ProjectSummaryDto>> GetProjectSummaries()
+    {
+        var sql = @"
+SELECT 
+    ProjectID,
+    Name,
+    TotalBudget,
+    Status,
+    StartDate,
+    EndDate,
+    Progress,
+    Priority,
+    EmployeeAssignedName,
+    NumberOfCustomers
+FROM ProjectSummaries;";
+
+        return await connection.QueryAsync<ProjectSummaryDto>(sql);
+    }
+
+
 
 }
