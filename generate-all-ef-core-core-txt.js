@@ -4,24 +4,24 @@
 const fs = require("fs");
 const path = require("path");
 
+const destination = "ADO.NET";
+
 const sourceDir = path.join(__dirname, "EF Core");
-const destDir = path.join(__dirname, "Dapper");
+const destDir = path.join(__dirname, destination);
 const outputFile = path.join(__dirname, "all-ef-core-code.txt");
 
 let output = "";
 
 try {
-  const files = fs.readdirSync(sourceDir);
-
   fs.readdirSync(sourceDir).forEach((file) => {
     const contents = fs.readFileSync(path.join(sourceDir, file), "utf8");
     output += `${file}: \`\`\`${contents}\`\`\`\n\n`;
   });
 
-  // fs.readdirSync(destDir).forEach((file) => {
-  //   const contents = fs.readFileSync(path.join(destDir, file), "utf8");
-  //   output += `${file}: \`\`\`${contents}\`\`\`\n\n`;
-  // });
+  fs.readdirSync(destDir).forEach((file) => {
+    const contents = fs.readFileSync(path.join(destDir, file), "utf8");
+    output += `${file}: \`\`\`${contents}\`\`\`\n\n`;
+  });
 
   const otherFiles = ["IRepo.cs", "schema.sql"];
 
@@ -30,7 +30,7 @@ try {
     output += `${file}: \`\`\`${contents}\`\`\`\n\n`;
   });
 
-  output += `\nI'm writing a demo app to compare different data access packages. I already implemented EF Core and now I want to create similar code with Dapper. MS SQL Server is the database.\n`;
+  output += `\nI'm writing a demo app to compare different data access packages. I already implemented EF Core and now I want to create similar code with ${destination}. MS SQL Server is the database.\n`;
 
   fs.writeFileSync(outputFile, output);
   console.log("Done");
