@@ -34,8 +34,10 @@ I'm writing a demo app to compare different data access packages. I already impl
     <!-- - Implement Task<List<ProjectSummaryDto>> GetProjectSummaries(); -->
     <!-- - Implement Task<List<EmployeeDto>> CallStoredProcedure(StoredProcedureQueryDto query); -->
     <!-- - Implement Task<List<CustomerSpatialQueryDto>> GetCustomersNearLocation(SpatialQueryDto query); -->
-- Create MigrationService.
-- Create AppDbContext equivalent.
-- Create Program.cs.
+<!-- - Create AppDbContext equivalent if necessary/relevant. -->
+- Create a Program.cs for a Web Application Using ASP.NET Core, based on EF Core Program.cs. Focus only on builder.Services and running the migrations.
 - How to make sure CreatedOn and UpdatedOn are set correctly? Preferably without using triggers and manual actions. 
     - Afterwards, adjust the repository to use the new method.
+
+## Skip
+- Create MigrationService using Dapper, based on EF Core MigrationService and AppliedMigrations and MigrationLock tables. 

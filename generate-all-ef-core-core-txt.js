@@ -1,31 +1,29 @@
 // Create javascript file that takes all files in dir and writes to contents to a new file like [Filename]: ```[Contents]``` .. etc
 // Usage: node generate-all-ef-core-core-txt.js
 // Output: all-ef-core-core.txt
-
 const fs = require("fs");
 const path = require("path");
 
-const dir = path.join(__dirname, "EF Core");
+const sourceDir = path.join(__dirname, "EF Core");
+const destDir = path.join(__dirname, "Dapper");
 const outputFile = path.join(__dirname, "all-ef-core-code.txt");
 
 let output = "";
 
-fs.readdir(dir, (err, files) => {
-  if (err) {
-    console.error(err);
-    return;
-  }
+try {
+  const files = fs.readdirSync(sourceDir);
 
-  files.forEach((file) => {
-    const contents = fs.readFileSync(path.join(dir, file), "utf8");
+  fs.readdirSync(sourceDir).forEach((file) => {
+    const contents = fs.readFileSync(path.join(sourceDir, file), "utf8");
     output += `${file}: \`\`\`${contents}\`\`\`\n\n`;
   });
 
-  const otherFiles = [
-    "IRepo.cs",
-    "schema.sql",
-    "Dapper/EmployeeProjectRepository.cs",
-  ];
+  fs.readdirSync(destDir).forEach((file) => {
+    const contents = fs.readFileSync(path.join(destDir, file), "utf8");
+    output += `${file}: \`\`\`${contents}\`\`\`\n\n`;
+  });
+
+  const otherFiles = ["IRepo.cs", "schema.sql"];
 
   otherFiles.forEach((file) => {
     const contents = fs.readFileSync(path.join(__dirname, file), "utf8");
@@ -36,4 +34,6 @@ fs.readdir(dir, (err, files) => {
 
   fs.writeFileSync(outputFile, output);
   console.log("Done");
-});
+} catch (err) {
+  console.error(err);
+}

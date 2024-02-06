@@ -7,16 +7,20 @@ using Microsoft.Data.SqlClient;
 
 public class EmployeeProjectRepository : IEmployeeProjectRepository
 {
-    private readonly string _connectionString;
 
-    public EmployeeProjectRepository(string connectionString)
+
+    private readonly string _connectionString;
+    // use this in stead 
+    private readonly DatabaseConnectionFactory _connectionFactory;
+
+    public EmployeeProjectRepository(DatabaseConnectionFactory connectionFactory)
     {
-        _connectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
+        _connectionFactory = connectionFactory;
     }
 
     private IDbConnection CreateConnection()
     {
-        return new SqlConnection(_connectionString);
+        return _connectionFactory.CreateConnection();
     }
 
     private async Task ExecuteAsync(string sql, object param = null)
@@ -250,7 +254,7 @@ WHERE favNumbers.Number = @FavoriteNumber";
 SELECT Id as EmployeeId, ManagerId, Name as EmployeeName
 FROM EmployeeCTE";
 
-        return await connection.QueryAsync<EmployeeHierarchyDto>(sql, new { EmployeeID = hierarchyQuery.EmployeeID });
+        return await QueryAsync<EmployeeHierarchyDto>(sql, new { EmployeeID = hierarchyQuery.EmployeeID });
     }
 
     public async Task AddEmployeeWithPartialData(EmployeePartialAddDto employeePartial)
@@ -518,7 +522,7 @@ SELECT e.Id AS EmployeeID,
 FROM Employees e
 LEFT JOIN Employees m ON e.ManagerId = m.Id";
 
-        return await connection.QueryAsync<EmployeeSelfJoinDto>(sql);
+        return await QueryAsync<EmployeeSelfJoinDto>(sql);
 
     }
 
@@ -557,7 +561,7 @@ SELECT
     NumberOfCustomers
 FROM ProjectSummaries;";
 
-        return await connection.QueryAsync<ProjectSummaryDto>(sql);
+        return await QueryAsync<ProjectSummaryDto>(sql);
     }
 
     public async Task<List<EmployeeDto>> CallStoredProcedure(StoredProcedureQueryDto query)
@@ -604,7 +608,7 @@ FROM
 WHERE 
     GeographicLocation.STDistance(@queryPoint) <= @Distance";
 
-        return await connection.QueryAsync<CustomerSpatialQueryDto>(sql, new
+        return await QueryAsync<CustomerSpatialQueryDto>(sql, new
         {
             query.Latitude,
             query.Longitude,
