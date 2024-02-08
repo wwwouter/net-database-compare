@@ -142,4 +142,27 @@ public class EmployeeProjectRepository : IEmployeeProjectRepository
         return projectsByCustomerId;
     }
 
+    public async Task<List<EmployeeDto>> FullTextSearch(FullTextSearchDto searchQuery)
+    {
+        var searchTerm = $"%{searchQuery.SearchTerm}%";
+
+        // Assuming Employee entity is correctly mapped and the session is configured
+        var employees = await _session.Query<Employee>()
+            .Where(e => e.Name.Contains(searchQuery.SearchTerm) || e.Department.Contains(searchQuery.SearchTerm))
+            .Select(e => new EmployeeDto
+            {
+                EmployeeID = e.Id,
+                Name = e.Name,
+                Age = e.Age,
+                Department = e.Department,
+                HireDate = e.HireDate,
+                Salary = e.Salary,
+                AddressLine1 = e.AddressLine1,
+                AddressLine2 = e.AddressLine2,
+                City = e.City
+            }).ToListAsync();
+
+        return employees;
+    }
+
 }
