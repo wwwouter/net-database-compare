@@ -5,14 +5,14 @@ I'm writing a demo app to compare different data access packages. I already impl
 
 <!-- - If relevant to have something like EF Core Entities, create them (use Entities.cs a basis), otherwise explain why not. -->
 <!-- - Create EfCoreTransaction equivalent and TransactionService, based on ITransaction. -->
-- Create empty EmployeeProjectRepository
+<!-- - Create empty EmployeeProjectRepository -->
 - Fill EmployeeProjectRepository one method at a time.
-    - Implement Task AddEmployee(EmployeeAddDto employee);
-        - Do I need to set `IsActive = true `? Is there another way? Remember `IsActive bit NOT NULL DEFAULT 1`
-        - How about CreatedOn and UpdatedOn?
-    - Implement Task UpdateEmployeeName(EmployeeUpdateNameDto employeeUpdate); 
-        - Do I need to fetch the entire entity first? Would prefer just one query.
-        - Make sure UpdatedOn is set correctly here and also in all other updates.
+    <!-- - Implement Task AddEmployee(EmployeeAddDto employee); -->
+        <!-- - Do I need to set `IsActive = true `? Is there another way? Remember `IsActive bit NOT NULL DEFAULT 1` -->
+        <!-- - How about CreatedOn and UpdatedOn? -->
+    <!-- - Implement Task UpdateEmployeeName(EmployeeUpdateNameDto employeeUpdate);  -->
+        <!-- - Do I need to fetch the entire entity first? Would prefer just one query. -->
+        <!-- - Make sure UpdatedOn is set correctly here and also in all other updates. -->
     - Implement Task DeleteEmployeeById(EmployeeDeleteDto employeeDelete);
     - Create some helper methods in EmployeeProjectRepository to make executing queries easier.
     - Implement Task<List<GetEmployeesByCityDto>> GetEmployeesByCity(EmployeeCityQueryDto cityQuery);  using helper methods if possible.
