@@ -30,11 +30,9 @@ public class EmployeeProjectRepository : IEmployeeProjectRepository
             IsActive = true // IsActive should be true upon creation
         };
 
-        using (var transaction = _session.BeginTransaction())
-        {
-            await _session.SaveAsync(employee);
-            await transaction.CommitAsync();
-        }
+        await _session.SaveAsync(employee);
+        await transaction.CommitAsync();
+
     }
 
     public async Task UpdateEmployeeName(EmployeeUpdateNameDto employeeUpdate)
