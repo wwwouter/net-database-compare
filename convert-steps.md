@@ -36,8 +36,8 @@ I'm writing a demo app to compare different data access packages. I already impl
     <!-- - Implement Task Operation1InATransaction(Guid id, string name);  and  Task Operation2InATransaction(Guid id, string name);  the repository methods Operation1InATransaction and Operation2InATransaction to not manage transactions themselves but to perform the required operations within the transaction context managed by EmployeeService.  -->
     <!-- - Implement Task BulkInsertEmployees(IEnumerable<EmployeeBulkInsertDto> employees);  using helper methods if possible. -->
     <!-- - Implement Task BulkUpdateEmployees(IEnumerable<EmployeeBulkUpdateDto> employees);  using helper methods if possible. -->
-    - Implement Task<List<EmployeesWithDynamicQueryDto>> GetEmployeesWithDynamicQuery(DynamicQueryDto query);  using helper methods if possible.
-    - Implement Task<PagedResultDto<EmployeeDto>> GetEmployeesPagedAndSorted(PagingAndSortingQueryDto query);  using helper methods if possible.
+    <!-- - Implement Task<List<EmployeesWithDynamicQueryDto>> GetEmployeesWithDynamicQuery(DynamicQueryDto query);  using helper methods if possible. -->
+    <!-- - Implement Task<PagedResultDto<EmployeeDto>> GetEmployeesPagedAndSorted(PagingAndSortingQueryDto query);  using helper methods if possible. -->
     - Implement Task<List<EmployeeSelfJoinDto>> GetEmployeeManagers();  using helper methods if possible.
     - Implement Task<decimal> GetTotalBudgetForProjects();  using helper methods if possible.
     - Implement Task<List<ProjectSummaryDto>> GetProjectSummaries();  using helper methods if possible.

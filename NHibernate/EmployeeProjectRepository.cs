@@ -524,5 +524,118 @@ WHERE Id = @EntityId";
         }
     }
 
+    public async Task<List<EmployeesWithDynamicQueryDto>> GetEmployeesWithDynamicQuery(DynamicQueryDto query)
+    {
+        // Start with a base query
+        IQueryable<Employee> baseQuery = _session.Query<Employee>();
+
+        // Apply dynamic filters
+        foreach (var filter in query.Filters)
+        {
+            switch (filter.Key.ToLower())
+            {
+                case "name":
+                    baseQuery = baseQuery.Where(e => e.Name.Contains(filter.Value.ToString()));
+                    break;
+                case "department":
+                    baseQuery = baseQuery.Where(e => e.Department.Contains(filter.Value.ToString()));
+                    break;
+                case "age":
+                    if (int.TryParse(filter.Value.ToString(), out int ageValue))
+                    {
+                        baseQuery = baseQuery.Where(e => e.Age == ageValue);
+                    }
+                    break;
+                    // Add more cases as necessary
+            }
+        }
+
+        // Apply dynamic sorting
+        if (query.SortOrder != null && query.SortOrder.Any())
+        {
+            foreach (var sortOrder in query.SortOrder)
+            {
+                switch (sortOrder.Key.ToLower())
+                {
+                    case "name":
+                        baseQuery = sortOrder.Value ? baseQuery.OrderBy(e => e.Name) : baseQuery.OrderByDescending(e => e.Name);
+                        break;
+                    case "age":
+                        baseQuery = sortOrder.Value ? baseQuery.OrderBy(e => e.Age) : baseQuery.OrderByDescending(e => e.Age);
+                        break;
+                        // Add more cases as necessary
+                }
+            }
+        }
+        else
+        {
+            // Default sort if no sort order is provided
+            baseQuery = baseQuery.OrderBy(e => e.Name);
+        }
+
+        // Execute the query and project the result
+        var result = await baseQuery
+            .Select(e => new EmployeesWithDynamicQueryDto
+            {
+                EmployeeID = e.Id,
+                Name = e.Name,
+                DynamicCriteria = query.Filters.ToDictionary(f => f.Key, f => f.Value)
+            })
+            .ToListAsync();
+
+        return result;
+    }
+
+    public async Task<PagedResultDto<EmployeeDto>> GetEmployeesPagedAndSorted(PagingAndSortingQueryDto query)
+    {
+        // Start with a base query from the Employees table
+        IQueryable<Employee> baseQuery = _session.Query<Employee>();
+
+        // Dynamically apply sorting based on the provided query
+        switch (query.SortBy.ToLower())
+        {
+            case "name":
+                baseQuery = query.Ascending ? baseQuery.OrderBy(e => e.Name) : baseQuery.OrderByDescending(e => e.Name);
+                break;
+            case "department":
+                baseQuery = query.Ascending ? baseQuery.OrderBy(e => e.Department) : baseQuery.OrderByDescending(e => e.Department);
+                break;
+            case "age":
+                baseQuery = query.Ascending ? baseQuery.OrderBy(e => e.Age) : baseQuery.OrderByDescending(e => e.Age);
+                break;
+            // Implement additional sorting cases as needed
+            default:
+                baseQuery = baseQuery.OrderBy(e => e.Name); // Default sorting by Name if no valid sort by provided
+                break;
+        }
+
+        // Count total items for pagination metadata before applying pagination
+        int totalCount = await baseQuery.CountAsync();
+
+        // Applying pagination
+        var pagedQuery = baseQuery
+            .Skip((query.PageNumber - 1) * query.PageSize)
+            .Take(query.PageSize);
+
+        // Projecting to DTO
+        var items = await pagedQuery.Select(e => new EmployeeDto
+        {
+            EmployeeID = e.Id,
+            Name = e.Name,
+            Age = e.Age,
+            Department = e.Department,
+            HireDate = e.HireDate,
+            Salary = e.Salary,
+            AddressLine1 = e.AddressLine1,
+            AddressLine2 = e.AddressLine2,
+            City = e.City
+        }).ToListAsync();
+
+        // Constructing the result with pagination metadata
+        var result = new PagedResultDto<EmployeeDto>(items, totalCount);
+
+        return result;
+    }
+
 
 }
