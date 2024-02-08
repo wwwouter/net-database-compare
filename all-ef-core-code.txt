@@ -1878,6 +1878,37 @@ WHERE Id = @EntityId";
         return result;
     }
 
+    public async Task<List<EmployeeSelfJoinDto>> GetEmployeeManagers()
+    {
+        // Query using LINQ to NHibernate
+        var query = from employee in _session.Query<Employee>()
+                    join hierarchy in _session.Query<EmployeeHierarchy>() on employee.Id equals hierarchy.EmployeeId into hierarchyGroup
+                    from subHierarchy in hierarchyGroup.DefaultIfEmpty()
+                    join manager in _session.Query<Employee>() on subHierarchy.ManagerId equals manager.Id into managerGroup
+                    from subManager in managerGroup.DefaultIfEmpty()
+                    select new EmployeeSelfJoinDto
+                    {
+                        EmployeeID = employee.Id,
+                        EmployeeName = employee.Name,
+                        ManagerID = subManager != null ? subManager.Id : (Guid?)null,
+                        ManagerName = subManager != null ? subManager.Name : null
+                    };
+
+        var result = await query.ToListAsync();
+        return result;
+    }
+
+    public async Task<decimal> GetTotalBudgetForProjects()
+    {
+        // Use LINQ to NHibernate to sum the Budget field of all projects
+        var totalBudget = await _session.Query<Project>()
+                                        .Select(p => p.Budget)
+                                        .SumAsync();
+
+        return totalBudget;
+    }
+
+
 
 }
 ```
