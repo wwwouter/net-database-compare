@@ -165,4 +165,20 @@ public class EmployeeProjectRepository : IEmployeeProjectRepository
         return employees;
     }
 
+    public async Task<List<EmployeeProjectOuterJoinDto>> GetEmployeeProjectsWithOuterJoin()
+    {
+        // Perform a left outer join between Employees and Projects
+        var result = await _session.Query<Employee>()
+            // Use LINQ's DefaultIfEmpty to simulate a left outer join
+            .SelectMany(
+                employee => _session.Query<Project>().Where(project => project.EmployeeAssigned == employee.Id).DefaultIfEmpty(),
+                (employee, project) => new EmployeeProjectOuterJoinDto
+                {
+                    EmployeeID = employee.Id,
+                    ProjectID = project != null ? project.Id : (Guid?)null // If there's no project, ProjectID is null
+                }
+            ).ToListAsync();
+
+        return result;
+    }
 }

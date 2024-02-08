@@ -1383,6 +1383,45 @@ public class EmployeeProjectRepository : IEmployeeProjectRepository
         return projectsByCustomerId;
     }
 
+    public async Task<List<EmployeeDto>> FullTextSearch(FullTextSearchDto searchQuery)
+    {
+        var searchTerm = $"%{searchQuery.SearchTerm}%";
+
+        // Assuming Employee entity is correctly mapped and the session is configured
+        var employees = await _session.Query<Employee>()
+            .Where(e => e.Name.Contains(searchQuery.SearchTerm) || e.Department.Contains(searchQuery.SearchTerm))
+            .Select(e => new EmployeeDto
+            {
+                EmployeeID = e.Id,
+                Name = e.Name,
+                Age = e.Age,
+                Department = e.Department,
+                HireDate = e.HireDate,
+                Salary = e.Salary,
+                AddressLine1 = e.AddressLine1,
+                AddressLine2 = e.AddressLine2,
+                City = e.City
+            }).ToListAsync();
+
+        return employees;
+    }
+
+    public async Task<List<EmployeeProjectOuterJoinDto>> GetEmployeeProjectsWithOuterJoin()
+    {
+        // Perform a left outer join between Employees and Projects
+        var result = await _session.Query<Employee>()
+            // Use LINQ's DefaultIfEmpty to simulate a left outer join
+            .SelectMany(
+                employee => _session.Query<Project>().Where(project => project.EmployeeAssigned == employee.Id).DefaultIfEmpty(),
+                (employee, project) => new EmployeeProjectOuterJoinDto
+                {
+                    EmployeeID = employee.Id,
+                    ProjectID = project != null ? project.Id : (Guid?)null // If there's no project, ProjectID is null
+                }
+            ).ToListAsync();
+
+        return result;
+    }
 }
 ```
 
