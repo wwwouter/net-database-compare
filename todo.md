@@ -9,5 +9,5 @@
 <!-- - linq2db    : Skipped after a few methods: same downsides as EF Core, but used less often. -->
 <!-- - NHibernate  -->
 <!-- - PetaPoco: skipped: ChatGPT was failing    -->
-- RepoDB     
+<!-- - RepoDB: skipped after a few methods: too similar to Dapper      -->
 - SqlKata    

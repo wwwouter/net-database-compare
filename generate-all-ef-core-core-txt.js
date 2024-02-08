@@ -30,7 +30,7 @@ try {
     output += `${file}: \`\`\`${contents}\`\`\`\n\n`;
   });
 
-  output += `\nI'm writing a demo app to compare different data access packages. I already implemented EF Core and now I want to create similar code with ${destination}. Use LINQ for queries. Try to use one query for each method, instead of having a fetch and an update query. Prefer CTEs for complex queries. MS SQL Server is the database.\n`;
+  output += `\nI'm writing a demo app to compare different data access packages. I already implemented EF Core and now I want to create similar code with ${destination}. Use LINQ for queries. Try to use one query for each method, instead of having a fetch and an update query. MS SQL Server is the database.\n`;
 
   fs.writeFileSync(outputFile, output);
   console.log("Done");

@@ -52,7 +52,7 @@ public class Employee : ITrackable
 
     public DateTime CreatedOn { get; set; }
 
-    public DateTime? UpdatedOn { get; set; }
+    public DateTime UpdatedOn { get; set; }
 
     public bool IsActive { get; set; }
 
@@ -94,7 +94,7 @@ public class Project : ITrackable
 
     public DateTime CreatedOn { get; set; }
 
-    public DateTime? UpdatedOn { get; set; }
+    public DateTime UpdatedOn { get; set; }
 
     // Navigation properties
     [ForeignKey("EmployeeAssigned")]
@@ -141,7 +141,7 @@ public class Customer : ITrackable
 
     public DateTime CreatedOn { get; set; }
 
-    public DateTime? UpdatedOn { get; set; }
+    public DateTime UpdatedOn { get; set; }
 }
 
 
@@ -164,7 +164,7 @@ public class ProjectCustomer : ITrackable
 
     public DateTime CreatedOn { get; set; }
 
-    public DateTime? UpdatedOn { get; set; }
+    public DateTime UpdatedOn { get; set; }
 
 
 
@@ -190,7 +190,7 @@ public class EmployeeHierarchy : ITrackable
 
     public DateTime CreatedOn { get; set; }
 
-    public DateTime? UpdatedOn { get; set; }
+    public DateTime UpdatedOn { get; set; }
 
     // Navigation properties
     [ForeignKey("EmployeeId")]
