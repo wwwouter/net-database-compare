@@ -10,4 +10,4 @@
 <!-- - NHibernate  -->
 <!-- - PetaPoco: skipped: ChatGPT was failing    -->
 <!-- - RepoDB: skipped after a few methods: too similar to Dapper      -->
-- SqlKata    
+<!-- - SqlKata : skipped after a few methods: too similar to SQL, without adding much benefit but adding another layer of complexity.    -->

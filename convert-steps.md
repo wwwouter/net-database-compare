@@ -3,8 +3,8 @@
 I'm writing a demo app to compare different data access packages. I already implemented EF Core and now I want to create similar code with ADO.NET. MS SQL Server is the database. 
 
 
-- If relevant to have something like EF Core Entities, create them (use Entities.cs a basis), otherwise explain why not.
-- Create EfCoreTransaction equivalent and TransactionService, based on ITransaction.
+<!-- - If relevant to have something like EF Core Entities, create them (use Entities.cs a basis), otherwise explain why not. -->
+<!-- - Create EfCoreTransaction equivalent and TransactionService, based on ITransaction. -->
 - Create empty EmployeeProjectRepository
 - Fill EmployeeProjectRepository one method at a time.
     - Implement Task AddEmployee(EmployeeAddDto employee);
@@ -27,7 +27,7 @@ I'm writing a demo app to compare different data access packages. I already impl
     - Implement Task AppendNumberToJsonData(AppendNumberToJsonDataDto appendNumberDto);  using helper methods if possible.
         - Is there a way to do this without fetching the entire entity and do it in one query?
     - Implement Task<List<CustomerBasedOnJsonPropertyDto>> SelectCustomerBasedOnJsonProperty(JsonPropertyQueryDto jsonPropertyQuery);  using helper methods if possible.
-    - Implement Task<List<CustomerBasedOnJsonPropertyDto>> SelectCustomersWithFavoriteNumber(int favoriteNumber);  using helper methods if possible.
+    <!-- - Implement Task<List<CustomerBasedOnJsonPropertyDto>> SelectCustomersWithFavoriteNumber(int favoriteNumber);  using helper methods if possible. -->
     - Implement Task<List<EmployeeHierarchyDto>> GetEmployeeHierarchy(EmployeeHierarchyQueryDto hierarchyQuery);  using helper methods if possible.
     - Can you update or add helper methods to make executing queries easier?
     - Implement Task AddEmployeeWithPartialData(EmployeePartialAddDto employeePartial);  using helper methods if possible.
@@ -36,7 +36,7 @@ I'm writing a demo app to compare different data access packages. I already impl
     - Implement Task Operation1InATransaction(Guid id, string name);  and  Task Operation2InATransaction(Guid id, string name);  the repository methods Operation1InATransaction and Operation2InATransaction to not manage transactions themselves but to perform the required operations within the transaction context managed by EmployeeService. 
     - Implement Task BulkInsertEmployees(IEnumerable<EmployeeBulkInsertDto> employees);  using helper methods if possible.
     - Implement Task BulkUpdateEmployees(IEnumerable<EmployeeBulkUpdateDto> employees);  using helper methods if possible.
-    - Implement Task<List<EmployeesWithDynamicQueryDto>> GetEmployeesWithDynamicQuery(DynamicQueryDto query);  using helper methods if possible.
+    <!-- - Implement Task<List<EmployeesWithDynamicQueryDto>> GetEmployeesWithDynamicQuery(DynamicQueryDto query);  using helper methods if possible. -->
     - Implement Task<PagedResultDto<EmployeeDto>> GetEmployeesPagedAndSorted(PagingAndSortingQueryDto query);  using helper methods if possible.
     - Implement Task<List<EmployeeSelfJoinDto>> GetEmployeeManagers();  using helper methods if possible.
     - Implement Task<decimal> GetTotalBudgetForProjects();  using helper methods if possible.
