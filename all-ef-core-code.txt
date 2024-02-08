@@ -1278,6 +1278,49 @@ public class EmployeeProjectRepository : IEmployeeProjectRepository
         }
     }
 
+    public async Task UpdateEmployeeName(EmployeeUpdateNameDto employeeUpdate)
+    {
+        using (var transaction = _session.BeginTransaction())
+        {
+            var employee = await _session.Query<Employee>()
+                                         .Where(e => e.Id == employeeUpdate.EmployeeID)
+                                         .FirstOrDefaultAsync();
+
+            if (employee != null)
+            {
+                employee.Name = employeeUpdate.Name;
+                // Set UpdatedOn to the current UTC date and time
+                employee.UpdatedOn = DateTime.UtcNow;
+
+                await _session.SaveOrUpdateAsync(employee);
+                await transaction.CommitAsync();
+            }
+            //          // HQL query to update employee name directly
+            // var hql = "update Employee set Name = :newName where Id = :employeeId";
+            // await _session.CreateQuery(hql)
+            //               .SetParameter("newName", employeeUpdate.Name)
+            //               .SetParameter("employeeId", employeeUpdate.EmployeeID)
+            //               .ExecuteUpdateAsync();
+        }
+    }
+
+    public async Task DeleteEmployeeById(EmployeeDeleteDto employeeDelete)
+    {
+        using (var transaction = _session.BeginTransaction())
+        {
+            var employee = await _session.Query<Employee>()
+                                         .Where(e => e.Id == employeeDelete.EmployeeID)
+                                         .FirstOrDefaultAsync();
+
+            if (employee != null)
+            {
+                _session.Delete(employee);
+                await transaction.CommitAsync();
+            }
+        }
+    }
+
+
 }
 ```
 

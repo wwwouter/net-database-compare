@@ -63,4 +63,21 @@ public class EmployeeProjectRepository : IEmployeeProjectRepository
         }
     }
 
+    public async Task DeleteEmployeeById(EmployeeDeleteDto employeeDelete)
+    {
+        using (var transaction = _session.BeginTransaction())
+        {
+            var employee = await _session.Query<Employee>()
+                                         .Where(e => e.Id == employeeDelete.EmployeeID)
+                                         .FirstOrDefaultAsync();
+
+            if (employee != null)
+            {
+                _session.Delete(employee);
+                await transaction.CommitAsync();
+            }
+        }
+    }
+
+
 }
