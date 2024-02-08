@@ -388,6 +388,49 @@ WHERE Id = @EntityId";
         return result;
     }
 
+    public async Task RunTwoUpdatesInSingleTransaction(SingleOperationTransactionDto data)
+    {
+        // Start a transaction using NHibernate's session
+        using (var transaction = _session.BeginTransaction())
+        {
+            try
+            {
+                // Fetch and update the first employee
+                var employee1 = await _session.GetAsync<Employee>(data.Id1);
+                if (employee1 != null)
+                {
+                    employee1.Name = data.Name1;
+                    await _session.SaveOrUpdateAsync(employee1);
+                }
+                else
+                {
+                    // Optionally handle the case where the employee doesn't exist
+                }
+
+                // Fetch and update the second employee
+                var employee2 = await _session.GetAsync<Employee>(data.Id2);
+                if (employee2 != null)
+                {
+                    employee2.Name = data.Name2;
+                    await _session.SaveOrUpdateAsync(employee2);
+                }
+                else
+                {
+                    // Optionally handle the case where the employee doesn't exist
+                }
+
+                // Commit the transaction if both updates succeed
+                await transaction.CommitAsync();
+            }
+            catch
+            {
+                // Rollback the transaction in case of any error
+                await transaction.RollbackAsync();
+                throw; // Rethrow the exception to handle it outside this method
+            }
+        }
+    }
+
 
 
 }
