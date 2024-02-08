@@ -42,7 +42,7 @@ I'm writing a demo app to compare different data access packages. I already impl
     <!-- - Implement Task<decimal> GetTotalBudgetForProjects();  using helper methods if possible. -->
     <!-- - Implement Task<List<ProjectSummaryDto>> GetProjectSummaries();  using helper methods if possible. -->
     <!-- - Implement Task<List<EmployeeDto>> CallStoredProcedure(StoredProcedureQueryDto query);  using helper methods if possible. -->
-    - Implement Task<List<CustomerSpatialQueryDto>> GetCustomersNearLocation(SpatialQueryDto query);  using helper methods if possible.
+    <!-- - Implement Task<List<CustomerSpatialQueryDto>> GetCustomersNearLocation(SpatialQueryDto query);  using helper methods if possible. -->
 - Create AppDbContext equivalent if necessary/relevant.
 - Create a Program.cs for a Web Application Using ASP.NET Core, based on EF Core Program.cs. Focus only on builder.Services and running the migrations.
 - Check: How to make sure UpdatedOn is set correctly? Preferably without using triggers and manual actions. 

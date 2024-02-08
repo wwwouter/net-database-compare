@@ -694,6 +694,41 @@ WHERE Id = @EntityId";
         return queryResult.ToList();
     }
 
+    public async Task<List<CustomerSpatialQueryDto>> GetCustomersNearLocation(SpatialQueryDto query)
+    {
+        // Assuming you have a session and a method to create a point from latitude and longitude
+        var point = $"geography::Point({query.Latitude}, {query.Longitude}, 4326)";
+
+        // Define the SQL query using spatial data functions specific to your DBMS (SQL Server in this example)
+        string sqlQuery = $@"
+        SELECT
+            Id AS CustomerID,
+            Name,
+            Email,
+            PhoneNumber,
+            AddressLine1,
+            AddressLine2,
+            City,
+            Country,
+            GeographicLocation.ToString() AS GeographicLocation,
+            LoyaltyPoints,
+            LastPurchaseDate,
+            Notes
+        FROM
+            Customers
+        WHERE
+            GeographicLocation.STDistance({point}) <= {query.Distance}
+        ORDER BY
+            GeographicLocation.STDistance({point})";
+
+        // Execute the query and transform the results into CustomerSpatialQueryDto objects
+        var queryResult = await _session.CreateSQLQuery(sqlQuery)
+            .SetResultTransformer(Transformers.AliasToBean<CustomerSpatialQueryDto>())
+            .ListAsync<CustomerSpatialQueryDto>();
+
+        return queryResult.ToList();
+    }
+
 
 
 }
