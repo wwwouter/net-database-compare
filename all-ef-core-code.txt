@@ -1908,6 +1908,33 @@ WHERE Id = @EntityId";
         return totalBudget;
     }
 
+    public async Task<List<ProjectSummaryDto>> GetProjectSummaries()
+    {
+        // Define your SQL query string. Assuming the view name is "ProjectSummaries" as per your schema.
+        string sqlQuery = "SELECT * FROM ProjectSummaries";
+
+        // Execute the query and map the results to the ProjectSummaryDto
+        var queryResult = await _session.CreateSQLQuery(sqlQuery)
+            .SetResultTransformer(Transformers.AliasToBean<ProjectSummaryDto>())
+            .ListAsync<ProjectSummaryDto>();
+
+        return queryResult.ToList();
+    }
+
+    public async Task<List<EmployeeDto>> CallStoredProcedure(StoredProcedureQueryDto query)
+    {
+        // Define the stored procedure call with a parameter placeholder
+        string storedProcedureCall = "EXEC GetEmployeesByDepartment @Department = :department";
+
+        // Execute the stored procedure and map the results to EmployeeDto
+        var queryResult = await _session.CreateSQLQuery(storedProcedureCall)
+            .SetParameter("department", query.Department) // Bind the department parameter from your DTO
+            .SetResultTransformer(Transformers.AliasToBean<EmployeeDto>()) // Transform the result set into EmployeeDto objects
+            .ListAsync<EmployeeDto>();
+
+        return queryResult.ToList();
+    }
+
 
 
 }
