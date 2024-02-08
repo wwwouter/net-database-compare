@@ -181,4 +181,75 @@ public class EmployeeProjectRepository : IEmployeeProjectRepository
 
         return result;
     }
+
+    public async Task<List<EmployeeSubqueryDto>> GetEmployeesWithSubquery()
+    {
+        // Define the budget threshold
+        decimal budgetThreshold = 100000M;
+
+        // Perform the query
+        var employeesWithHighBudgetProjects = await _session.Query<Employee>()
+            .Where(e => e.AssignedProjects.Any(p => p.Budget > budgetThreshold))
+            .Select(e => new EmployeeSubqueryDto
+            {
+                EmployeeID = e.Id,
+                Name = e.Name
+            })
+            .ToListAsync();
+
+        return employeesWithHighBudgetProjects;
+    }
+
+    public async Task EditJsonData(EditJsonDataDto editJsonDataDto)
+    {
+        // Start a transaction
+        using (var transaction = _session.BeginTransaction())
+        {
+            // Fetch the customer entity by ID
+            var customer = await _session.Query<Customer>()
+                                          .FirstOrDefaultAsync(c => c.Id == editJsonDataDto.EntityId);
+
+            if (customer != null)
+            {
+                // Assuming JSONData is a string property containing JSON data
+                // Update the JSON data with the provided value
+                customer.JSONData = JsonSerializer.Serialize(editJsonDataDto.UpdatedJsonData);
+
+                // Update the customer entity in the session
+                await _session.SaveOrUpdateAsync(customer);
+
+                // Commit the transaction
+                await transaction.CommitAsync();
+            }
+        }
+    }
+
+    public async Task AppendNumberToJsonData(AppendNumberToJsonDataDto appendNumberDto)
+    {
+        // SQL query to update JSON data
+        var sql = @"
+UPDATE Customers
+SET JSONData = JSON_MODIFY(JSONData, '$.FavoriteNumbers', JSON_QUERY(
+    CASE 
+        WHEN JSON_VALUE(JSONData, '$.FavoriteNumbers') IS NOT NULL 
+        THEN CONCAT(SUBSTRING(JSON_QUERY(JSONData, '$.FavoriteNumbers'), 1, LEN(JSON_QUERY(JSONData, '$.FavoriteNumbers')) - 1), ',', @NumberToAppend, ']')
+        ELSE JSON_QUERY('[' + CAST(@NumberToAppend AS VARCHAR(20)) + ']')
+    END
+))
+WHERE Id = @EntityId";
+
+        // Execute the raw SQL update
+        using (var transaction = _session.BeginTransaction())
+        {
+            await _session.CreateSQLQuery(sql)
+                          .SetParameter("NumberToAppend", appendNumberDto.NumberToAppend)
+                          .SetParameter("EntityId", appendNumberDto.EntityId)
+                          .ExecuteUpdateAsync();
+
+            await transaction.CommitAsync();
+        }
+    }
+
+
+
 }

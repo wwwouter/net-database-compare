@@ -18,6 +18,11 @@ public class EmployeeMap : ClassMap<Employee>
         HasMany(x => x.AssignedProjects).Cascade.All().Inverse().KeyColumn("EmployeeAssigned");
         References(x => x.EmployeeHierarchy).Cascade.All().Column("Id");
 
+        HasMany(x => x.AssignedProjects)
+                   .KeyColumn("EmployeeAssigned") // Ensure this matches your actual foreign key column name
+                   .Inverse()
+                   .Cascade.All();
+
         Map(x => x.CreatedOn)
         .Not.Nullable()
         .Default("SYSDATETIME()") // Inform NHibernate about the default value
