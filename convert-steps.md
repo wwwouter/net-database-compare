@@ -32,8 +32,8 @@ I'm writing a demo app to compare different data access packages. I already impl
     <!-- - Can you update or add helper methods to make executing queries easier? -->
     <!-- - Implement Task AddEmployeeWithPartialData(EmployeePartialAddDto employeePartial);  using helper methods if possible. -->
     <!-- - Implement Task<ProjectWithEmployee> GetProjectWithAssignedEmployee(Guid projectId);  using helper methods if possible. -->
-    - Implement Task RunTwoUpdatesInSingleTransaction(SingleOperationTransactionDto data);  using helper methods if possible.
-    - Implement Task Operation1InATransaction(Guid id, string name);  using helper methods if possible., Task Operation2InATransaction(Guid id, string name);  using helper methods if possible. and EmployeeService equivalent
+    <!-- - Implement Task RunTwoUpdatesInSingleTransaction(SingleOperationTransactionDto data);  using helper methods if possible. -->
+    - Implement Task Operation1InATransaction(Guid id, string name);  and  Task Operation2InATransaction(Guid id, string name);  the repository methods Operation1InATransaction and Operation2InATransaction to not manage transactions themselves but to perform the required operations within the transaction context managed by EmployeeService. 
     - Implement Task BulkInsertEmployees(IEnumerable<EmployeeBulkInsertDto> employees);  using helper methods if possible.
     - Implement Task BulkUpdateEmployees(IEnumerable<EmployeeBulkUpdateDto> employees);  using helper methods if possible.
     - Implement Task<List<EmployeesWithDynamicQueryDto>> GetEmployeesWithDynamicQuery(DynamicQueryDto query);  using helper methods if possible.

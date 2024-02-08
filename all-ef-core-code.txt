@@ -1586,6 +1586,92 @@ WHERE Id = @EntityId";
         return employeeHierarchy.ToList();
     }
 
+    public async Task AddEmployeeWithPartialData(EmployeePartialAddDto employeePartial)
+    {
+        // Create a new Employee instance with partial data from the DTO
+        var employee = new Employee
+        {
+            Name = employeePartial.Name,
+            Age = employeePartial.Age,
+            Department = "DefaultDepartment", // Assuming a default value since it's partial data
+            HireDate = DateTime.UtcNow, // Assuming current date/time for HireDate
+            IsActive = true // Assuming IsActive should be true by default
+        };
+
+        // Use NHibernate session to save the new employee
+        using (var transaction = _session.BeginTransaction())
+        {
+            await _session.SaveAsync(employee);
+            await transaction.CommitAsync();
+        }
+    }
+
+    public async Task<ProjectWithEmployee> GetProjectWithAssignedEmployee(Guid projectId)
+    {
+        // Perform a LINQ query to retrieve the project with its assigned employee
+        var query = from project in _session.Query<Project>()
+                    where project.Id == projectId
+                    select new ProjectWithEmployee
+                    {
+                        Id = project.Id.ToString(),
+                        Name = project.Name,
+                        EmployeeAssigned = project.Employee != null ? new EmployeeInfo
+                        {
+                            Id = project.Employee.Id.ToString(),
+                            Name = project.Employee.Name,
+                            Department = project.Employee.Department
+                        } : null
+                    };
+
+        // Execute the query and return the result
+        var result = await query.FirstOrDefaultAsync();
+
+        return result;
+    }
+
+    public async Task RunTwoUpdatesInSingleTransaction(SingleOperationTransactionDto data)
+    {
+        // Start a transaction using NHibernate's session
+        using (var transaction = _session.BeginTransaction())
+        {
+            try
+            {
+                // Fetch and update the first employee
+                var employee1 = await _session.GetAsync<Employee>(data.Id1);
+                if (employee1 != null)
+                {
+                    employee1.Name = data.Name1;
+                    await _session.SaveOrUpdateAsync(employee1);
+                }
+                else
+                {
+                    // Optionally handle the case where the employee doesn't exist
+                }
+
+                // Fetch and update the second employee
+                var employee2 = await _session.GetAsync<Employee>(data.Id2);
+                if (employee2 != null)
+                {
+                    employee2.Name = data.Name2;
+                    await _session.SaveOrUpdateAsync(employee2);
+                }
+                else
+                {
+                    // Optionally handle the case where the employee doesn't exist
+                }
+
+                // Commit the transaction if both updates succeed
+                await transaction.CommitAsync();
+            }
+            catch
+            {
+                // Rollback the transaction in case of any error
+                await transaction.RollbackAsync();
+                throw; // Rethrow the exception to handle it outside this method
+            }
+        }
+    }
+
 
 
 }

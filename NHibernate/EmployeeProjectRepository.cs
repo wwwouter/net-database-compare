@@ -431,6 +431,25 @@ WHERE Id = @EntityId";
         }
     }
 
+    public async Task Operation1InATransaction(Guid id, string name)
+    {
+        var employee = await _session.GetAsync<Employee>(id);
+        if (employee != null)
+        {
+            employee.Name = name;
+            await _session.SaveOrUpdateAsync(employee);
+        }
+    }
+
+    public async Task Operation2InATransaction(Guid id, string name)
+    {
+        var employee = await _session.GetAsync<Employee>(id);
+        if (employee != null)
+        {
+            employee.Name = name;
+            await _session.SaveOrUpdateAsync(employee);
+        }
+    }
 
 
 }
