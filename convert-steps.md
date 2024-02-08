@@ -3,7 +3,7 @@
 I'm writing a demo app to compare different data access packages. I already implemented EF Core and now I want to create similar code with ADO.NET. MS SQL Server is the database. 
 
 
-- If relevant to have something like EF Core Entities, create them (use Entities.cs a basis), otherwise explain why not.
+<!-- - If relevant to have something like EF Core Entities, create them (use Entities.cs a basis), otherwise explain why not. -->
 - Create EfCoreTransaction equivalent and TransactionService, based on ITransaction.
 - Create empty EmployeeProjectRepository
 - Fill EmployeeProjectRepository one method at a time.

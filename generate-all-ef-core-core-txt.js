@@ -4,7 +4,7 @@
 const fs = require("fs");
 const path = require("path");
 
-const destination = "PetaPoco";
+const destination = "RepoDB";
 
 const sourceDir = path.join(__dirname, "EF Core");
 const destDir = path.join(__dirname, destination);
