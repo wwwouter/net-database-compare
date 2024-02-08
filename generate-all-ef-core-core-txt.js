@@ -4,7 +4,7 @@
 const fs = require("fs");
 const path = require("path");
 
-const destination = "SqlKata";
+const destination = "Dapper";
 
 const sourceDir = path.join(__dirname, "EF Core");
 const destDir = path.join(__dirname, destination);
@@ -18,10 +18,10 @@ try {
     output += `${file}: \`\`\`${contents}\`\`\`\n\n`;
   });
 
-  fs.readdirSync(destDir).forEach((file) => {
-    const contents = fs.readFileSync(path.join(destDir, file), "utf8");
-    output += `${file}: \`\`\`${contents}\`\`\`\n\n`;
-  });
+  // fs.readdirSync(destDir).forEach((file) => {
+  //   const contents = fs.readFileSync(path.join(destDir, file), "utf8");
+  //   output += `${file}: \`\`\`${contents}\`\`\`\n\n`;
+  // });
 
   const otherFiles = ["IRepo.cs", "schema.sql"];
 

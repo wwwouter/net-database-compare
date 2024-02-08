@@ -1,9 +1,9 @@
 public class EmployeeService
 {
-    private readonly IEmployeeProjectRepository _repository;
+    private readonly EmployeeProjectRepository _repository;
     private readonly ITransactionService _transactionService;
 
-    public EmployeeService(ITransactionService transactionService, IEmployeeProjectRepository repository)
+    public EmployeeService(ITransactionService transactionService, EmployeeProjectRepository repository)
     {
         _transactionService = transactionService;
         _repository = repository;

@@ -1,5 +1,8 @@
 
 
+- unique await EnsureDatabaseStructure();
+- add relevant indexes
+
 
 # Packages
 
