@@ -26,10 +26,10 @@ I'm writing a demo app to compare different data access packages. I already impl
     <!-- - Implement Task EditJsonData(EditJsonDataDto editJsonDataDto);  using helper methods if possible. -->
     <!-- - Implement Task AppendNumberToJsonData(AppendNumberToJsonDataDto appendNumberDto);  using helper methods if possible. -->
         <!-- - Is there a way to do this without fetching the entire entity and do it in one query? -->
-    - Implement Task<List<CustomerBasedOnJsonPropertyDto>> SelectCustomerBasedOnJsonProperty(JsonPropertyQueryDto jsonPropertyQuery);  using helper methods if possible.
-    - Implement Task<List<CustomerBasedOnJsonPropertyDto>> SelectCustomersWithFavoriteNumber(int favoriteNumber);  using helper methods if possible.
-    - Implement Task<List<EmployeeHierarchyDto>> GetEmployeeHierarchy(EmployeeHierarchyQueryDto hierarchyQuery);  using helper methods if possible.
-    - Can you update or add helper methods to make executing queries easier?
+    <!-- - Implement Task<List<CustomerBasedOnJsonPropertyDto>> SelectCustomerBasedOnJsonProperty(JsonPropertyQueryDto jsonPropertyQuery);  using helper methods if possible. -->
+    <!-- - Implement Task<List<CustomerBasedOnJsonPropertyDto>> SelectCustomersWithFavoriteNumber(int favoriteNumber);  using helper methods if possible. -->
+    <!-- - Implement Task<List<EmployeeHierarchyDto>> GetEmployeeHierarchy(EmployeeHierarchyQueryDto hierarchyQuery);  using helper methods if possible. -->
+    <!-- - Can you update or add helper methods to make executing queries easier? -->
     - Implement Task AddEmployeeWithPartialData(EmployeePartialAddDto employeePartial);  using helper methods if possible.
     - Implement Task<ProjectWithEmployee> GetProjectWithAssignedEmployee(Guid projectId);  using helper methods if possible.
     - Implement Task RunTwoUpdatesInSingleTransaction(SingleOperationTransactionDto data);  using helper methods if possible.

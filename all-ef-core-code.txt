@@ -2108,4 +2108,4 @@ CREATE TABLE MigrationLock (
 ```
 
 
-I'm writing a demo app to compare different data access packages. I already implemented EF Core and now I want to create similar code with NHibernate. Use LINQ for queries. MS SQL Server is the database.
+I'm writing a demo app to compare different data access packages. I already implemented EF Core and now I want to create similar code with NHibernate. Use LINQ for queries. Try to use one query for each method, instead of having a fetch and an update query. MS SQL Server is the database.

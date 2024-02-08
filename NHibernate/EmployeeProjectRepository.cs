@@ -250,6 +250,101 @@ WHERE Id = @EntityId";
         }
     }
 
+    public async Task<List<CustomerBasedOnJsonPropertyDto>> SelectCustomerBasedOnJsonProperty(JsonPropertyQueryDto jsonPropertyQuery)
+    {
+        // Construct the raw SQL query using SQL Server's JSON functions
+        string sqlQuery = $@"
+        SELECT
+            Id AS CustomerID,
+            Name,
+            Age,
+            Email,
+            PhoneNumber,
+            AddressLine1,
+            AddressLine2,
+            City,
+            Country,
+            GeographicLocation.ToString() AS GeographicLocation,
+            LoyaltyPoints,
+            LastPurchaseDate,
+            Notes,
+            JSONData
+        FROM
+            Customers
+        WHERE
+            JSON_VALUE(JSONData, '$.{jsonPropertyQuery.JsonPropertyName}') = :Value";
+
+        // Execute the raw SQL query using NHibernate's session
+        var queryResult = await _session.CreateSQLQuery(sqlQuery)
+            .SetParameter("Value", jsonPropertyQuery.Value)
+            .SetResultTransformer(Transformers.AliasToBean<CustomerBasedOnJsonPropertyDto>())
+            .ListAsync<CustomerBasedOnJsonPropertyDto>();
+
+        return queryResult.ToList();
+    }
+
+    public async Task<List<CustomerBasedOnJsonPropertyDto>> SelectCustomersWithFavoriteNumber(int favoriteNumber)
+    {
+        // Raw SQL query leveraging SQL Server's JSON functions to find the favorite number in an array
+        string sqlQuery = $@"
+        SELECT
+            Id AS CustomerID,
+            Name,
+            Age,
+            Email,
+            PhoneNumber,
+            AddressLine1,
+            AddressLine2,
+            City,
+            Country,
+            GeographicLocation.ToString() AS GeographicLocation,
+            LoyaltyPoints,
+            LastPurchaseDate,
+            Notes,
+            JSONData
+        FROM
+            Customers
+        WHERE
+            JSON_VALUE(JSONData, '$.FavoriteNumbers') LIKE :FavoriteNumber
+            OR JSON_QUERY(JSONData, '$.FavoriteNumbers') LIKE '%':FavoriteNumber'%'";
+
+        // Execute the raw SQL query using NHibernate's session
+        var queryResult = await _session.CreateSQLQuery(sqlQuery)
+            .SetParameter("FavoriteNumber", favoriteNumber)
+            .SetResultTransformer(Transformers.AliasToBean<CustomerBasedOnJsonPropertyDto>())
+            .ListAsync<CustomerBasedOnJsonPropertyDto>();
+
+        return queryResult.ToList();
+    }
+
+    public async Task<List<EmployeeHierarchyDto>> GetEmployeeHierarchy(EmployeeHierarchyQueryDto hierarchyQuery)
+    {
+        // Define the CTE SQL query
+        string cteQuery = @"
+    ;WITH EmployeeCTE AS (
+        SELECT e.Id, e.Name AS EmployeeName, eh.ManagerId, m.Name AS ManagerName
+        FROM Employees e
+        LEFT JOIN EmployeeHierarchy eh ON e.Id = eh.EmployeeId
+        LEFT JOIN Employees m ON eh.ManagerId = m.Id
+        WHERE e.Id = :employeeId
+        UNION ALL
+        SELECT e.Id, e.Name, eh.ManagerId, m.Name
+        FROM Employees e
+        INNER JOIN EmployeeHierarchy eh ON e.Id = eh.EmployeeId
+        INNER JOIN EmployeeCTE ecte ON eh.ManagerId = ecte.Id
+        LEFT JOIN Employees m ON eh.ManagerId = m.Id
+    )
+    SELECT Id AS EmployeeId, EmployeeName, ManagerId, ManagerName FROM EmployeeCTE";
+
+        // Execute the CTE query using NHibernate
+        var employeeHierarchy = await _session.CreateSQLQuery(cteQuery)
+            .SetParameter("employeeId", hierarchyQuery.EmployeeID)
+            .SetResultTransformer(Transformers.AliasToBean<EmployeeHierarchyDto>())
+            .ListAsync<EmployeeHierarchyDto>();
+
+        return employeeHierarchy.ToList();
+    }
+
 
 
 }
