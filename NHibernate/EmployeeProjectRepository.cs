@@ -345,6 +345,49 @@ WHERE Id = @EntityId";
         return employeeHierarchy.ToList();
     }
 
+    public async Task AddEmployeeWithPartialData(EmployeePartialAddDto employeePartial)
+    {
+        // Create a new Employee instance with partial data from the DTO
+        var employee = new Employee
+        {
+            Name = employeePartial.Name,
+            Age = employeePartial.Age,
+            Department = "DefaultDepartment", // Assuming a default value since it's partial data
+            HireDate = DateTime.UtcNow, // Assuming current date/time for HireDate
+            IsActive = true // Assuming IsActive should be true by default
+        };
+
+        // Use NHibernate session to save the new employee
+        using (var transaction = _session.BeginTransaction())
+        {
+            await _session.SaveAsync(employee);
+            await transaction.CommitAsync();
+        }
+    }
+
+    public async Task<ProjectWithEmployee> GetProjectWithAssignedEmployee(Guid projectId)
+    {
+        // Perform a LINQ query to retrieve the project with its assigned employee
+        var query = from project in _session.Query<Project>()
+                    where project.Id == projectId
+                    select new ProjectWithEmployee
+                    {
+                        Id = project.Id.ToString(),
+                        Name = project.Name,
+                        EmployeeAssigned = project.Employee != null ? new EmployeeInfo
+                        {
+                            Id = project.Employee.Id.ToString(),
+                            Name = project.Employee.Name,
+                            Department = project.Employee.Department
+                        } : null
+                    };
+
+        // Execute the query and return the result
+        var result = await query.FirstOrDefaultAsync();
+
+        return result;
+    }
+
 
 
 }

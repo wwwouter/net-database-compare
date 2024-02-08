@@ -30,8 +30,8 @@ I'm writing a demo app to compare different data access packages. I already impl
     <!-- - Implement Task<List<CustomerBasedOnJsonPropertyDto>> SelectCustomersWithFavoriteNumber(int favoriteNumber);  using helper methods if possible. -->
     <!-- - Implement Task<List<EmployeeHierarchyDto>> GetEmployeeHierarchy(EmployeeHierarchyQueryDto hierarchyQuery);  using helper methods if possible. -->
     <!-- - Can you update or add helper methods to make executing queries easier? -->
-    - Implement Task AddEmployeeWithPartialData(EmployeePartialAddDto employeePartial);  using helper methods if possible.
-    - Implement Task<ProjectWithEmployee> GetProjectWithAssignedEmployee(Guid projectId);  using helper methods if possible.
+    <!-- - Implement Task AddEmployeeWithPartialData(EmployeePartialAddDto employeePartial);  using helper methods if possible. -->
+    <!-- - Implement Task<ProjectWithEmployee> GetProjectWithAssignedEmployee(Guid projectId);  using helper methods if possible. -->
     - Implement Task RunTwoUpdatesInSingleTransaction(SingleOperationTransactionDto data);  using helper methods if possible.
     - Implement Task Operation1InATransaction(Guid id, string name);  using helper methods if possible., Task Operation2InATransaction(Guid id, string name);  using helper methods if possible. and EmployeeService equivalent
     - Implement Task BulkInsertEmployees(IEnumerable<EmployeeBulkInsertDto> employees);  using helper methods if possible.
