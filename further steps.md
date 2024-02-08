@@ -13,3 +13,8 @@
     - bool DeleteAll<T>(); 
     - T Get<T,W>(string table, W where);       
         - in repo wrap in a method with table set.
+
+# general
+
+- Use nameof instead of string
+    - var insertEmployeeQuery = $"INSERT INTO Employees(Name, Age, Department) VALUES(@{nameof(employeeDto.Name)},  @{nameof(employeeDto.Age)}, @{nameof(employeeDto.Department)})";

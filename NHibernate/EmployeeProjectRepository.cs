@@ -27,14 +27,39 @@ public class EmployeeProjectRepository : IEmployeeProjectRepository
             AddressLine1 = employeeDto.AddressLine1,
             AddressLine2 = employeeDto.AddressLine2,
             City = employeeDto.City,
-            IsActive = true // Assuming IsActive should be true upon creation
+            IsActive = true // IsActive should be true upon creation
         };
 
-        // Use asynchronous session methods to interact with the database
         using (var transaction = _session.BeginTransaction())
         {
             await _session.SaveAsync(employee);
             await transaction.CommitAsync();
+        }
+    }
+
+    public async Task UpdateEmployeeName(EmployeeUpdateNameDto employeeUpdate)
+    {
+        using (var transaction = _session.BeginTransaction())
+        {
+            var employee = await _session.Query<Employee>()
+                                         .Where(e => e.Id == employeeUpdate.EmployeeID)
+                                         .FirstOrDefaultAsync();
+
+            if (employee != null)
+            {
+                employee.Name = employeeUpdate.Name;
+                // Set UpdatedOn to the current UTC date and time
+                employee.UpdatedOn = DateTime.UtcNow;
+
+                await _session.SaveOrUpdateAsync(employee);
+                await transaction.CommitAsync();
+            }
+            //          // HQL query to update employee name directly
+            // var hql = "update Employee set Name = :newName where Id = :employeeId";
+            // await _session.CreateQuery(hql)
+            //               .SetParameter("newName", employeeUpdate.Name)
+            //               .SetParameter("employeeId", employeeUpdate.EmployeeID)
+            //               .ExecuteUpdateAsync();
         }
     }
 

@@ -1268,10 +1268,9 @@ public class EmployeeProjectRepository : IEmployeeProjectRepository
             AddressLine1 = employeeDto.AddressLine1,
             AddressLine2 = employeeDto.AddressLine2,
             City = employeeDto.City,
-            IsActive = true // Assuming IsActive should be true upon creation
+            IsActive = true // IsActive should be true upon creation
         };
 
-        // Use asynchronous session methods to interact with the database
         using (var transaction = _session.BeginTransaction())
         {
             await _session.SaveAsync(employee);

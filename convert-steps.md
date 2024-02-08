@@ -10,8 +10,9 @@ I'm writing a demo app to compare different data access packages. I already impl
     <!-- - Implement Task AddEmployee(EmployeeAddDto employee); -->
         <!-- - Do I need to set `IsActive = true `? Is there another way? Remember `IsActive bit NOT NULL DEFAULT 1` -->
         <!-- - How about CreatedOn and UpdatedOn? -->
-    - Implement Task UpdateEmployeeName(EmployeeUpdateNameDto employeeUpdate); 
-        - Make sure UpdatedOn is set correctly.
+    <!-- - Implement Task UpdateEmployeeName(EmployeeUpdateNameDto employeeUpdate);  -->
+        <!-- - Do I need to fetch the entire entity first? Would prefer just one query. -->
+        <!-- - Make sure UpdatedOn is set correctly here and also in all other updates. -->
     - Implement Task DeleteEmployeeById(EmployeeDeleteDto employeeDelete);
     - Create some helper methods in EmployeeProjectRepository to make executing queries easier.
     - Implement Task<List<GetEmployeesByCityDto>> GetEmployeesByCity(EmployeeCityQueryDto cityQuery);  using helper methods if possible.
