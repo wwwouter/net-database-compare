@@ -77,5 +77,69 @@ public class EmployeeProjectRepository : IEmployeeProjectRepository
         }
     }
 
+    public async Task<List<GetEmployeesByCityDto>> GetEmployeesByCity(EmployeeCityQueryDto cityQuery)
+    {
+        // Use LINQ to query the Employees table and select employees by city
+        var employeesByCity = await _session.Query<Employee>()
+            .Where(e => e.City == cityQuery.City)
+            .Select(e => new GetEmployeesByCityDto
+            {
+                EmployeeID = e.Id,
+                Name = e.Name,
+                City = e.City
+            })
+            .ToListAsync();
+
+        return employeesByCity;
+    }
+
+    public async Task<List<ProjectDto>> GetProjectsByEmployeeId(EmployeeProjectsQueryDto employeeProjectsQuery)
+    {
+        // Query the Projects table to find projects assigned to the specified employee ID
+        var projectsByEmployeeId = await _session.Query<Project>()
+            .Where(p => p.EmployeeAssigned == employeeProjectsQuery.EmployeeID)
+            .Select(p => new ProjectDto
+            {
+                ProjectID = p.Id,
+                Name = p.Name,
+                StartDate = p.StartDate,
+                EndDate = p.EndDate,
+                Budget = p.Budget,
+                Status = (byte)p.Status, // Assuming Status is an enum and you want to convert it to its byte value
+                LogoSvg = p.LogoSvg,
+                Notes = p.Notes,
+                Progress = p.Progress,
+                Priority = (byte)p.Priority, // Similarly, assuming Priority is an enum
+                EmployeeAssigned = p.EmployeeAssigned
+            })
+            .ToListAsync();
+
+        return projectsByEmployeeId;
+    }
+
+    public async Task<List<ProjectDto>> GetProjectsByCustomerId(CustomerProjectsQueryDto customerProjectsQuery)
+    {
+        // Querying the Project and ProjectCustomer tables to find projects associated with the given customer ID
+        var projectsByCustomerId = await _session.Query<ProjectCustomer>()
+            .Where(pc => pc.CustomerId == customerProjectsQuery.CustomerID)
+            .Select(pc => pc.Project)
+            .Select(p => new ProjectDto
+            {
+                ProjectID = p.Id,
+                Name = p.Name,
+                StartDate = p.StartDate,
+                EndDate = p.EndDate,
+                Budget = p.Budget,
+                Status = (byte)p.Status, // Assuming Status is an enum and converting it to byte
+                LogoSvg = p.LogoSvg,
+                Notes = p.Notes,
+                Progress = p.Progress,
+                Priority = (byte)p.Priority, // Similarly, assuming Priority is an enum
+                EmployeeAssigned = p.EmployeeAssigned
+            })
+            .ToListAsync();
+
+        return projectsByCustomerId;
+    }
 
 }

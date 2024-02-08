@@ -15,9 +15,9 @@ I'm writing a demo app to compare different data access packages. I already impl
         <!-- - Make sure UpdatedOn is set correctly here and also in all other updates. -->
     <!-- - Implement Task DeleteEmployeeById(EmployeeDeleteDto employeeDelete); -->
     <!-- - Create some helper methods in EmployeeProjectRepository to make executing queries easier. -->
-    - Implement Task<List<GetEmployeesByCityDto>> GetEmployeesByCity(EmployeeCityQueryDto cityQuery);  using helper methods if possible.
-        - Is it SELECTing all columns? If so, can you make it SELECT only the necessary columns?
-    - Implement Task<List<ProjectDto>> GetProjectsByEmployeeId(EmployeeProjectsQueryDto employeeProjectsQuery);  using helper methods if possible.
+    <!-- - Implement Task<List<GetEmployeesByCityDto>> GetEmployeesByCity(EmployeeCityQueryDto cityQuery);  using helper methods if possible. -->
+        <!-- - Is it SELECTing all columns? If so, can you make it SELECT only the necessary columns? -->
+    <!-- - Implement Task<List<ProjectDto>> GetProjectsByEmployeeId(EmployeeProjectsQueryDto employeeProjectsQuery);  using helper methods if possible. -->
     - Implement Task<List<ProjectDto>> GetProjectsByCustomerId(CustomerProjectsQueryDto customerProjectsQuery);  using helper methods if possible.
     - Implement Task<List<EmployeeDto>> FullTextSearch(FullTextSearchDto searchQuery);  using helper methods if possible.
     - Implement Task<List<EmployeeProjectOuterJoinDto>> GetEmployeeProjectsWithOuterJoin();  using helper methods if possible.
